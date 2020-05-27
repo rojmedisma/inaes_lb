@@ -104,6 +104,7 @@ class BaseDatos extends Ayuda{
 	 * @param string $tabla	Nombre de la tabla
 	 * @param string $and	Complemento del query despues del where (AND, ORDER BY...)
 	 * @param string $cmp_id	Campo Id único o llave, si viene vacío, el arreglo se regresa sin indices
+	 * @param boolean $imprimir_query	En la revisión. Para imprimir en pantalla el query que se está ejecutando
 	 * @return array
 	 */
 	public function getArrDeTabla($tabla, $and="", $cmp_id="", $imprimir_query=false){

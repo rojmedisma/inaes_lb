@@ -5,8 +5,23 @@
 
 global $globales;
 global $mysqli;
-$dir_confg = str_replace('htdocs', '', $_SERVER['DOCUMENT_ROOT']) . 'config/';
-$global = parse_ini_file($dir_confg . 'inaes_lb.ini', true);
+$es_conexion_hosting = false;
+
+if($es_conexion_hosting){
+	$dir_confg = $_SERVER['DOCUMENT_ROOT'].'/config/';
+	$arc_config = 'inaes_lb_hosting.ini';
+}else{
+	$dir_confg = str_replace('htdocs', '', $_SERVER['DOCUMENT_ROOT']) . 'config/';
+	$arc_config = 'inaes_lb.ini';
+}
+$global = @parse_ini_file($dir_confg . $arc_config, true);
+if($global==false){
+	echo "<h2>Error al buscar archivo ini</h2>";
+	echo "<p>Archivo de configuración no encontrado</p>";
+	echo "Ver archivo: global.php";
+	die();
+}
+
 foreach ($global as $grupo => $valores) {
 	foreach ($valores as $campo => $valor)
 		$globales[$grupo][$campo] = $valor;

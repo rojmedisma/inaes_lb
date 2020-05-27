@@ -1,5 +1,6 @@
 <!-- Ficha técnica -->
-							<form role="form" name="frm_ficha_t" id="frm_ficha_t" method="post" action="<?php echo url_controlador('mml_ficha_t','guardar', '', false) ?>">
+							<form role="form" name="frm_ficha_t" id="frm_ficha_t" method="post" action="<?php echo url_controlador('mml_guardar','ficha', '', false) ?>">
+								<input type="hidden" name="mml_ficha_tecnica_id" id="mml_ficha_tecnica_id" value="<?php echo $controlador_obj->getMMLFichaTecnicaId(); ?>">
 								<div class="card-body">
 									<h4 class="text-primary">Datos de Identificación del Indicador</h4>
 									<div class="row">

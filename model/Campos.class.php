@@ -44,7 +44,6 @@ class Campos extends Ayuda{
 		}else{
 			return '';
 		}
-		
 	}
 	/**
 	 * Modifica la variable que indica si los campos a ser desplegados van estar o no en modo lectura, su valor se toma como valor predeterminado, ya que puede ser modificado mediante el arreglo de argumentos dentro de cada declaración de campo.
@@ -125,7 +124,7 @@ class Campos extends Ayuda{
 		}else{
 			$arr_atrib = $this->defineAtributos($cmp_id_nom, $arr_atrib_usu, $tipo_campo);
 			$arr_tag = array();
-			$arr_tag[] = (isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt'], $cmp_id_nom) : '';
+			$arr_tag[] = (isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt'], $cmp_id_nom, $arr_atrib_usu) : '';
 			$arr_tag[] = '	<input type="text" name="'.$cmp_id_nom.'" id="'.$cmp_id_nom.'" class="'.$arr_atrib['class'].'" value="'.$arr_atrib['value'].'">';
 			$arr_tag[] = $arr_atrib['tag_note_error'];
 			return $this->div_form_group(tag_string($arr_tag), $arr_atrib);
@@ -161,7 +160,7 @@ class Campos extends Ayuda{
 	public function cmpTextoLectura($cmp_id_nom, $arr_atrib_usu=array()){
 		$arr_atrib = $this->defineAtributos($cmp_id_nom, $arr_atrib_usu, "texto_lectura");
 		$arr_tag = array();
-		$arr_tag[] = (isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt']) : '';
+		$arr_tag[] = (isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt'], '', $arr_atrib_usu) : '';
 		$arr_tag[] = $this->textoLectura($arr_atrib['value']);
 		$arr_tag[] = '<input type="hidden" name="'.$cmp_id_nom.'" id="'.$cmp_id_nom.'" value="'.$arr_atrib['value'].'">';
 		$arr_tag[] = $arr_atrib['tag_note_error'];
@@ -202,13 +201,13 @@ class Campos extends Ayuda{
 		if($lectura){
 			$arr_atrib = $this->defineAtributos($cmp_id_nom, $arr_atrib_usu, "texto_lectura");
 			$arr_tag = array();
-			$arr_tag[] = (isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt'], $cmp_id_nom) : '';
+			$arr_tag[] = (isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt'], $cmp_id_nom, $arr_atrib_usu) : '';
 			$arr_tag[] = $this->cmpOculto($cmp_id_nom);
 			return $this->div_form_group(tag_string($arr_tag), $arr_atrib);
 		}else{
 			$arr_atrib = $this->defineAtributos($cmp_id_nom, $arr_atrib_usu, 'contrasenia');
 			$arr_tag = array();
-			$arr_tag[] = (isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt'], $cmp_id_nom) : '';
+			$arr_tag[] = (isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt'], $cmp_id_nom, $arr_atrib_usu) : '';
 			$arr_tag[] = '	<input type="password" name="'.$cmp_id_nom.'" id="'.$cmp_id_nom.'" class="'.$arr_atrib['class'].'" value="'.$arr_atrib['value'].'">';
 			$arr_tag[] = $arr_atrib['tag_note_error'];
 			return $this->div_form_group(tag_string($arr_tag), $arr_atrib);
@@ -265,7 +264,7 @@ class Campos extends Ayuda{
 			$arr_atrib = $this->defineAtributos($cmp_id_nom, $arr_atrib_usu, "select");
 			$tag_options = tag_string($arr_atrib['arr_tag_options']);
 			$arr_tag = array();
-			$arr_tag[] = (isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt'], $cmp_id_nom) : '';
+			$arr_tag[] = (isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt'], $cmp_id_nom, $arr_atrib_usu) : '';
 			$arr_tag[] = $this->cmpOculto($cmp_desc_nom);
 			$arr_tag[] = '	<select name="'.$cmp_id_nom.'" id="'.$cmp_id_nom.'" class="'.$arr_atrib['class'].'">';
 			$arr_tag[] = '		'.$tag_options;
@@ -304,7 +303,7 @@ class Campos extends Ayuda{
 		}else{
 			$arr_atrib = $this->defineAtributos($cmp_id_nom, $arr_atrib_usu, "textarea");
 			$arr_tag = array();
-			$arr_tag[] = (isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt'], $cmp_id_nom) : '';
+			$arr_tag[] = (isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt'], $cmp_id_nom, $arr_atrib_usu) : '';
 			$arr_tag[] = '	<textarea rows="'.$arr_atrib['rows'].'" name="'.$cmp_id_nom.'" id="'.$cmp_id_nom.'" class="'.$arr_atrib['class'].'">'.$arr_atrib['value'].'</textarea>';
 			$arr_tag[] = $arr_atrib['tag_note_error'];
 			
@@ -320,7 +319,7 @@ class Campos extends Ayuda{
 	private function cmpTextAreaLectura($cmp_id_nom, $arr_atrib_usu=array()){
 		$arr_atrib = $this->defineAtributos($cmp_id_nom, $arr_atrib_usu, "texto_lectura");
 		$arr_tag = array();
-		$arr_tag[] = (isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt'], $cmp_id_nom) : '';
+		$arr_tag[] = (isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt'], $cmp_id_nom, $arr_atrib_usu) : '';
 		$arr_tag[] = nl2br($this->textoLectura($arr_atrib['value']));
 		$arr_tag[] = '<textarea name="'.$cmp_id_nom.'" id="'.$cmp_id_nom.'" style="display:none">'.$arr_atrib['value'].'</textarea>';
 		$arr_tag[] = $arr_atrib['tag_note_error'];
@@ -341,7 +340,7 @@ class Campos extends Ayuda{
 			$arr_atrib = $this->defineAtributos($cmp_id_nom, $arr_atrib_usu, "adjunto");
 			$arr_tag = array();
 			$arr_tag[] = '<div class="'.$arr_atrib['frm_group_class'].'">';
-			$arr_tag[] = '	'.(isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt'], $cmp_id_nom.'_f') : '';
+			$arr_tag[] = '	'.(isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt'], $cmp_id_nom.'_f', $arr_atrib_usu) : '';
 			$arr_tag[] = '	<div class="input-group">';
 			$arr_tag[] = '		<div class="custom-file">';
 			$arr_tag[] = '			<input type="file" id="'.$cmp_id_nom.'_f" name="'.$cmp_id_nom.'_f" value="">';
@@ -363,7 +362,7 @@ class Campos extends Ayuda{
 	private function cmpAdjuntoLectura($cmp_id_nom, $arr_atrib_usu=array()){
 		$arr_atrib = $this->defineAtributos($cmp_id_nom, $arr_atrib_usu, "texto_lectura");
 		$arr_tag = array();
-		$arr_tag[] = (isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt'], $cmp_id_nom) : '';
+		$arr_tag[] = (isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt'], $cmp_id_nom, $arr_atrib_usu) : '';
 		$arr_tag[] = $arr_atrib['tag_note_error'];
 		return tag_string($arr_tag);
 	}
@@ -384,7 +383,7 @@ class Campos extends Ayuda{
 		}else{
 			$arr_atrib = $this->defineAtributos($cmp_id_nom, $arr_atrib_usu, "checkbox");
 			$arr_tag = array();
-			$arr_tag[] = (isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt'], $cmp_id_nom) : '';
+			$arr_tag[] = (isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt'], $cmp_id_nom, $arr_atrib_usu) : '';
 			$arr_tag[] = '<input name="'.$cmp_id_nom.'" id="'.$cmp_id_nom.'_h" type="hidden" value="'.$arr_atrib['unchecked_val'].'">';
 			$arr_tag[] = '<div class="form-check" id="div_'.$cmp_id_nom.'">';
 			$arr_tag[] = '		<input type="checkbox" class="form-check-input" name="'.$cmp_id_nom.'" id="'.$cmp_id_nom.'" value="'.$arr_atrib['value'].'" '.$arr_atrib['checked'].' >';
@@ -408,7 +407,7 @@ class Campos extends Ayuda{
 			$tag_chk_ico = '<i class="fa fa-fw fa-square-o"></i>&nbsp;';
 		}
 		$arr_tag = array();
-		$arr_tag[] = (isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt']) : '';
+		$arr_tag[] = (isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt'],'',$arr_atrib_usu) : '';
 		$arr_tag[] = '<div>'.$this->textoLectura($tag_chk_ico.$texto).'</div>';
 		$arr_tag[] = '<input type="hidden" name="'.$cmp_id_nom.'" id="'.$cmp_id_nom.'" value="'.$arr_atrib['value'].'">';
 		$arr_tag[] = $arr_atrib['tag_note_error'];
@@ -430,10 +429,12 @@ class Campos extends Ayuda{
 	 * @param string $for	Nombre del campo al que hace referencia
 	 * @return string
 	 */
-	public function label($texto, $for=""){
+	public function label($texto, $for="", $arr_atrib_usu=array()){
+		$class_usu = (isset($arr_atrib_usu['lbl_class']))? ' '.$arr_atrib_usu['lbl_class'] : '';
+
 		$arr_tag = array();
 		$tag_for = ($for!="")? ' for="'.$for.'"' : '';
-		$arr_tag[] = '<label'.$tag_for.'>'.$texto.'</label>';
+		$arr_tag[] = '<label class="label-control'.$class_usu.'"'.$tag_for.'>'.$texto.'</label>';
 		return tag_string($arr_tag);
 	}
 	/**

@@ -1,5 +1,8 @@
 <!-- Definición de variables -->
-							<form role="form" name="frm_ficha_t" id="frm_ficha_t" method="post" action="<?php echo url_controlador('mml_ficha_t','guardar', '', false) ?>">
+							<form role="form" name="frm_ficha_t" id="frm_ficha_t" method="post" action="<?php echo url_controlador('mml_guardar','var_def', '', false) ?>">
+								<input type="hidden" name="mml_ficha_tecnica_id" id="mml_ficha_tecnica_id" value="<?php echo $controlador_obj->getMMLFichaTecnicaId(); ?>">
+								<input type="hidden" name="mml_variable_def_id" id="mml_variable_def_id" value="<?php echo $controlador_obj->getMMLVariableDefId(); ?>">
+								<input type="hidden" name="var_en_formula" id="var_en_formula" value="<?php echo $controlador_obj->getCampoValor('var_en_formula'); ?>">
 								<div class="card-body">
 									<h4 class="text-primary">Características de las Variables</h4>
 									<?php if(count($controlador_obj->getArrVariablesDef())){?>

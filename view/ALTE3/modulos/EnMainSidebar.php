@@ -12,7 +12,7 @@ if($controlador_act == CONTROLADOR_DEFECTO && $accion_act == ACCION_DEFECTO){
 	$sb_mnu_opc_activo= "a_mnu_opc_forma";
 }
 $accion_act_sel_frm = "";
-$accion_act_sel_vista = "";
+$accion_act_sel_vista = "vista_ind";
 if($controlador_act=="mml_indicador" && $controlador_obj->getIndFolio() ){
 	$txt_mnu = ($controlador_obj->getIndFolio()!="")? "Folio: ".$controlador_obj->getIndFolio() : "Forma";
 	$accion_act_sel_frm = ($controlador_obj->getPestaniaFrmAct()!="")? $controlador_obj->getPestaniaFrmAct() : "ficha";
@@ -36,7 +36,7 @@ if($controlador_act=="mml_indicador" && $controlador_obj->getIndFolio() ){
 					<!-- Sidebar user panel (optional) -->
 					<div class="user-panel mt-3 pb-3 mb-3 d-flex">
 						<div class="info">
-							<a href="#" class="d-block"><i class="fas fa-user mr-1"></i>Ismael Rojas</a>
+							<a href="#" class="d-block"><i class="fas fa-user mr-1"></i><?php echo concatena_nombre($controlador_obj->usuario_dato("nombre"),$controlador_obj->usuario_dato("ap_paterno"),$controlador_obj->usuario_dato("ap_materno")) ?></a>
 						</div>
 					</div>
 					<!-- Sidebar Menu -->

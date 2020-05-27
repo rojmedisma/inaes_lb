@@ -9,6 +9,15 @@ class ControladorBase{
 	private $autentificar = true;
 	private $titulo_pagina = '';
 	private $arr_pag_anterior = array();
+	private $arr_reg_usuario = array();
+	private $arr_permisos = array();
+	protected $arr_cmps_frm = array();	//Arreglo para los formularios
+	public function __constructINAES(){
+		$this->setArrRegUsuario();	//Se crea el arreglo con el detalle de datos del usuario
+		$permiso = new Permiso();
+		$this->setArrPermiso("escritura", $permiso->tiene_permiso('mml_ae'));
+	}
+	
 	/**
 	 * Modifica el título principal de la página actual (Función obsoleta, ahora se usa setPaginaDistintivos)
 	 * @param string $titulo_pagina	Título principal de la página actual
@@ -86,7 +95,44 @@ class ControladorBase{
 		$this->nombre_vista = $nombre_vista;
 	}
 	/**
+	 * Define el arreglo con el detalle del registro de usuario actual si es que no se envía el cat_usuario_id del argumento
+	 * @param string $cat_usuario_id
+	 */
+	protected function setArrRegUsuario($cat_usuario_id=""){
+		$usuario = new Usuario();
+		$usuario->setArrUsuario($cat_usuario_id);
+		$arr_usuario = array();
+		if($usuario->getCatUsuarioId()!=""){
+			$arr_usuario= $usuario->getArrUsuario();
+		}
+		$this->arr_reg_usuario = $arr_usuario;
+	}
+	/**
+	 * Devuelve el arreglo con el detalle del registro de usuario
+	 * @return array
+	 */
+	protected function getArrRegUsuario(){
+		return $this->arr_reg_usuario;
+	}
+	/**
+	 * Del arreglo con el detalle del registro de usuario almacenado en arr_reg_usuario, devuelve el nombre del campo definido como dato en el argumento
+	 * @param string $dato	Nombre de la variable en arr_reg_usuario
+	 * @return string
+	 */
+	public function usuario_dato($dato){
+		$arr_reg_usuario = $this->getArrRegUsuario();
+		
+		$usr_dato = "";
+		if(count($arr_reg_usuario)){
+			if(isset($arr_reg_usuario[$dato])){
+				$usr_dato = $arr_reg_usuario[$dato];
+			}
+		}
+		return $usr_dato;
+	}
+	/**
 	 * Devuelve un arreglo con la información del usuario actual del catálogo de usuarios
+	 * Info:	Función obsoleta, se sugiere utilizar setArrRegUsuario y getArrRegUsuario
 	 * @return array
 	 */
 	public function getArrUsuario(){
@@ -145,5 +191,53 @@ class ControladorBase{
 			}
 			
 		}
+	}
+	/**
+	 * Agrega el permiso específico al arreglo de permisos que rigen la forma actual del usuario actual
+	 * @param string $nom_permiso	Nombre específico del permiso en la forma actual
+	 * @param boolean $agregar	Agregar permiso (true,false)
+	 */
+	protected function setArrPermiso($nom_permiso, $agregar=true) {
+		$arr_permisos = $this->arr_permisos;
+		if(!isset($arr_permisos[$nom_permiso]) && $agregar){
+			array_push($arr_permisos, $nom_permiso);
+		}
+		$this->arr_permisos = $arr_permisos;
+	}
+	/**
+	 * Devuelve el arreglo de permisos
+	 * @return array
+	 */
+	protected function getArrPermisos(){
+		return $this->arr_permisos;
+	}
+	/**
+	 * Indica si el permiso actual pertenece a la lista de permisos del arreglo arr_permisos
+	 * @param string $nom_permiso
+	 * @return boolean
+	 */
+	public function tienePermiso($nom_permiso){
+		$arr_permisos = $this->getArrPermisos();
+		if(in_array($nom_permiso, $arr_permisos, true)){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	/**
+	 * Devuelve el arreglo que contiene todos los campos del formulario actual
+	 * @return array
+	 */
+	public function getArrCmpsForm(){
+		return $this->arr_cmps_frm;
+	}
+	/**
+	 * Devuelve el valor del campo indicado en el argumento
+	 * @param string $cmp_nom	Nombre del campo
+	 * @return string
+	 */
+	public function getCampoValor($cmp_nom){
+		$arr_cmps_frm = $this->getArrCmpsForm();
+		return valorEnArreglo($arr_cmps_frm, $cmp_nom);
 	}
 }

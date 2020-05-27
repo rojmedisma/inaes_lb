@@ -13,12 +13,14 @@ class ModeloBase extends Ayuda{
 	}
 	/**
 	 * Genera el arreglo que contiene el detalle de los registros de la tabla definida en el argumento
-	 * @param string $tabla
-	 * @param string $and
+	 * @param string $tabla	Nombre de la tabla
+	 * @param string $and	Complemento del query despues del where (AND, ORDER BY...)
+	 * @param string $cmp_id	Campo Id único o llave, si viene vacío, el arreglo se regresa sin indices
+	 * @param boolean $imprimir_query	En la revisión. Para imprimir en pantalla el query que se está ejecutando	
 	 */
-	protected function setArrTbl($tabla, $and) {
+	protected function setArrTbl($tabla, $and, $cmp_id="", $imprimir_query=false) {
 		$and_ft = " AND `borrar` IS NULL ".$and;
-		$arr_tbl = $this->bd->getArrDeTabla($tabla, $and_ft);
+		$arr_tbl = $this->bd->getArrDeTabla($tabla, $and_ft, $cmp_id, $imprimir_query);
 		$this->arr_tbl = $arr_tbl;
 	}
 	/**

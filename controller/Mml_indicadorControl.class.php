@@ -17,9 +17,11 @@ class Mml_indicadorControl extends ControladorBase{
 	public $tag_cmp_ficha = null;
 	public $tag_cmp_var_def = null;
 	public function __construct(){
+		parent::__constructINAES();
 		$mml_ficha_tecnica_id = (isset($_REQUEST['mml_ficha_tecnica_id']))? $_REQUEST['mml_ficha_tecnica_id'] : "";
 		$pestania_vista_act = (isset($_REQUEST['pestania_vista_act']))? $_REQUEST['pestania_vista_act'] : "";
 		$pestania_frm_act = (isset($_REQUEST['pestania_frm_act']))? $_REQUEST['pestania_frm_act'] : "";
+		//echo "<br>pestania_frm_act:".$pestania_frm_act."<br>";
 		$this->pestania_vista_act = $pestania_vista_act;
 		$this->pestania_frm_act = $pestania_frm_act;
 		
@@ -64,6 +66,8 @@ class Mml_indicadorControl extends ControladorBase{
     		$mml_ficha_t->setArrMMLFichaT($mml_ficha_tecnica_id);
     		$arr_cmps_frm = $mml_ficha_t->getArrReg();
     	}
+    	$this->arr_cmps_frm = $arr_cmps_frm;
+    	
     	$this->tag_cmp_ficha = new Campos();
     	$this->tag_cmp_ficha->setVerNombreCampo(false);
     	$this->tag_cmp_ficha->setValorCampos($arr_cmps_frm);
@@ -88,12 +92,16 @@ class Mml_indicadorControl extends ControladorBase{
     		$arr_cmps_frm = $mml_var_der->getArrReg();
     		
     	}
+    	$this->arr_cmps_frm = $arr_cmps_frm;
     	
     	$this->tag_cmp_var_def = new Campos();
     	$this->tag_cmp_var_def->setVerNombreCampo(false);
     	$this->tag_cmp_var_def->setValorCampos($arr_cmps_frm);
     	
     	$this->setMostrarVista("MMLIndicador.php");
+    }
+    public function guardar_ficha(){
+    	
     }
     /**
      * Define el Id mml_variable_def_id, si no viene en el argumento, entonces se saca el id de la primer variable del indicador

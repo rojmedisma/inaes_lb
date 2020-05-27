@@ -12,42 +12,11 @@ class Catalogo{
 		$this->bd = new BaseDatos();
 	}
 	/**
-	 * Modifica el arreglo de catálogo con el contenido de la tabla <strong>cat_cuestionario</strong>
-	 * @param string $and
-	 */
-	public function setArrTblCatCuestionario($and=""){
-		$this->arr_tbl_cat = $this->bd->getArrDeTabla("cat_cuestionario",$and,"cat_cuestionario_id");
-	}
-	/**
-	 * Modifica el arreglo de catálogo con el contenido de la tabla <strong>cat_cader</strong>
-	 * @param string $and
-	 */
-	public function setArrTblCatCader($and=""){
-		$this->arr_tbl_cat = $this->bd->getArrDeTabla("cat_cader",$and,"cat_cader_id");
-	}
-	/**
 	 * Modifica el arreglo de catálogo con el contenido de la tabla <strong>cat_estado</strong>
 	 * @param string $and
 	 */
 	public function setArrTblCatEstado($and=""){
 		$this->arr_tbl_cat = $this->bd->getArrDeTabla("cat_estado",$and,"cat_estado_id");
-	}
-	/**
-	 * Modifica el arreglo de catálogo con el contenido de la tabla <strong>cat_cader</strong>, categorizando la información por el Id del estado y el Id del CADER
-	 */
-	public function setArrCatEdoCader() {
-		$arr_cader = $this->bd->getArrDeTabla("cat_cader",'',"cat_cader_id");
-		$arr_edo_cader = array();
-		foreach ($arr_cader as $cat_cader_id=>$arr_det){
-			$cat_estado_id = $arr_det['cat_estado_id'];
-			$descripcion = htmlentities($arr_det["descripcion"]);
-			$desc_corta = (strlen($descripcion)>=23)? substr($descripcion,0,23)."..." : $descripcion;
-			$arr_edo_cader[$cat_estado_id][$cat_cader_id] = array(
-					"descripcion"=>$descripcion,
-					"desc_corta"=>$desc_corta,
-			);
-		}
-		$this->arr_tbl_cat = $arr_edo_cader;
 	}
 	/**
 	 * Devuelve el arreglo de la tabla de catálogo definida previamente, todos los métodos usan la misma variable tipo arreglo
@@ -65,6 +34,25 @@ class Catalogo{
 		$qry = "UPDATE `".$this->bd->getBD()."`.`".$tbl_cat."` SET `borrar` = '1' WHERE `".$tbl_cat."_id` = '".$id_reg."';";
 		$this->bd->ejecutaQry($qry);
 	}
+	/**
+	 * Genera texto html con las opciones combo del catálogo de municipios
+	 * @param string $cat_estado_id
+	 */
+	public function setListaOpcCatMunicipio($cat_estado_id){
+		$and = " AND `cat_estado_id` LIKE '".$cat_estado_id."'";
+		$arr_cat_municipio = $this->bd->getArrDeTabla("cat_municipio",$and);
+		$lista_opciones = '<option value="" data-desc_val="" data-esp_val="">[SELECCIONAR]</option>';
+		foreach ($arr_cat_municipio as $arr_det_mpo){
+			$cat_municipio_id = $arr_det_mpo['cat_municipio_id'];
+			$desc = $arr_det_mpo['descripcion'];
+			$lista_opciones .= '<option value="'.$cat_municipio_id.'" data-desc_val="'.$desc.'" data-esp_val="">'.$desc.'</option>';
+		}
+		$this->lista_opciones = $lista_opciones;
+	}
+	/**
+	 * Genera texto html con las opciones combo del catálogo de localidades
+	 * @param string $cat_municipio_id
+	 */
 	public function setListaOpcCatLocalidad($cat_municipio_id) {
 		$cat_estado_id = substr($cat_municipio_id, 0,2);
 		$municipio_cve = substr($cat_municipio_id, -3);
@@ -79,6 +67,10 @@ class Catalogo{
 		}
 		$this->lista_opciones = $lista_opciones;
 	}
+	/**
+	 * Devuelve texto html con las opciones combo creadas
+	 * @return string
+	 */
 	public function getListaOpciones() {
 		return $this->lista_opciones;
 	}

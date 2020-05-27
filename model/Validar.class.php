@@ -13,8 +13,38 @@ class Validar{
      * @param integer $cat_cuestionario_id
      * @param array $arr_valor	Arreglo de campos con su valor dentro de la forma actual
      */
-    public function serArrReglasDeCuestionario($cat_cuestionario_id, $arr_valor) {
-        $this->setArrReglas(cuest_cve($cat_cuestionario_id), $arr_valor);
+    public function serArrReglasDeCuestionario($cat_cuestionario_id, $cat_cuest_modulo_id, $arr_cmps_frm) {
+    	$this->arr_valor = $arr_cmps_frm;
+    	switch (intval($cat_cuestionario_id)){
+    		case 1:
+    			switch(intval($cat_cuest_modulo_id)){
+    				case 1:
+    					$this->setArrReglasDeC01M01();
+    					break;
+    				case 2:
+    					$this->setArrReglasDeC01M02();
+                        break;
+                    case 3:
+                        $this->setArrReglasDeC01M03();
+                        break;
+                    case 4:
+                    	$this->setArrReglasDeC01M04();
+                    	break;
+                    case 5:
+                    	$this->setArrReglasDeC01M05();
+                    	break;
+                    case 6:
+                    	$this->setArrReglasDeC01M06();
+                    	break;
+                    case 7:
+                    	$this->setArrReglasDeC01M07();
+                    	break;
+                    case 8:
+                    	$this->setArrReglasDeC01M08();
+                    	break;
+    			}
+    			break;
+    	}
     }
     /**
      * Devuelve el arreglo de campos enviado por argumento desde el método <strong>serArrReglasDeCuestionario</strong>
@@ -28,8 +58,10 @@ class Validar{
      */
     public function setArrValidaciones() {
         $arr_reglas = $this->getArrReglas();
+       
         $arr_valor = $this->getArrValorCampos();
         $arr_validaciones = array();
+        
         
         foreach($arr_reglas as $campo=>$arr_param){
             $alerta = "";
@@ -100,259 +132,258 @@ class Validar{
         return $this->arr_validaciones;
     }
     /**
-     * Modifica el arreglo de reglas de validación del cuestionario indicado en el argumento a modo de identificador de cuestionario o clave de cuestionario. Dependiendo del identificador, se ejecuta la función de reglas específicas del cuestionario 
-     * @param string $identificador	Indentificador del cuestionario sacada a partir del Id de cuestionario
-     * @param array $arr_valor
+     * Reglas de validación para cat_cuestionario_id=1 cat_cuest_modulo_id=1
      */
-    private function setArrReglas($identificador, $arr_valor) {
-        $this->arr_valor = $arr_valor;
-        switch ($identificador){
-            case 'c01': $this->setArrReglasDeC01(); break;
-            case 'c02': $this->setArrReglasDeC02(); break;
-            case 'c03': $this->setArrReglasDeC03(); break;
-        }
+    private function setArrReglasDeC01M01(){
+    	$arr_valor = $this->getArrValorCampos();
+    	extract($arr_valor, EXTR_OVERWRITE);
+    	$arr_reglas = array();
+    	$arr_reglas['persona_tipo'] = array('regla'=>'requerido');
+    	if($persona_tipo==2){
+    		$arr_reglas['org_nombre'] = array('regla'=>'requerido');
+    		$arr_reglas['org_razon_soc'] = array('regla'=>'requerido');
+    		
+    	}
+    	$arr_reglas['repre_nombre'] = array('regla'=>'requerido');
+    	$arr_reglas['repre_ap_paterno'] = array('regla'=>'requerido');
+    	$arr_reglas['repre_ap_materno'] = array('regla'=>'requerido');
+    	$arr_reglas['ubica_estado'] = array('regla'=>'requerido');
+    	$arr_reglas['ubica_municipio'] = array('regla'=>'requerido');
+    	$arr_reglas['ubica_localidad_desc'] = array('regla'=>'requerido');
+    	$arr_reglas['contacto_correo'] = array('regla'=>'requerido');
+    	$arr_reglas['contacto_telefono'] = array('regla'=>'requerido');
+    	$arr_reglas['contact_whapp'] = array('regla'=>'requerido');
+    	$arr_reglas['socio_num_mujeres'] = array('regla'=>'requerido');
+    	$arr_reglas['socio_num_hombres'] = array('regla'=>'requerido');
+    	$arr_reglas['socio_num_total'] = array('regla'=>'requerido');
+    	$arr_reglas['ini_op_anio'] = array('regla'=>'requerido');
+    	$arr_reglas['ini_op_mes'] = array('regla'=>'requerido');
+    	$arr_reglas['cobertura_municipio'] = array('regla'=>'requerido');
+    	$arr_reglas['cobertura_km'] = array('regla'=>'requerido');
+    	
+    	$this->arr_reglas = $arr_reglas;
     }
     /**
-     * Se define el arreglo de reglas para el cuestionario para productores
+     * Reglas de validación para cat_cuestionario_id=1 cat_cuest_modulo_id=2
      */
-    private function setArrReglasDeC01() {
-        $arr_valor = $this->getArrValorCampos();
-        extract($arr_valor, EXTR_OVERWRITE);
-        $arr_reglas = array();
-        $arr_reglas['p1r1c1'] = array('regla'=>'requerido');
-        if($p1r1c1==1){
-            $arr_reglas['p1r1c2'] = array('regla'=>'requerido');
-        }elseif($p1r1c1==2){
-            $arr_reglas['p1r2c2'] = array('regla'=>'requerido');
-        }
-        
-        
-        
-        for($r=1; $r<=8; $r++){
-            if($arr_valor['p4r'.$r.'c1']==1){
-                $arr_reglas['p4r'.$r.'c2'] = array('regla'=>'requerido');
-                $arr_reglas['p4r'.$r.'c3'] = array('regla'=>'requerido');
-            }
-        }
-        $arr_reglas['p4r9'] = array('regla'=>'requerido');
-        for($r=1; $r<=7; $r++){
-            if($arr_valor['p6r'.$r.'c1']==1){
-                $arr_reglas['p6r'.$r.'c2'] = array('regla'=>'requerido');
-                $arr_reglas['p6r'.$r.'c3'] = array('regla'=>'requerido');
-            }
-        }
-        $arr_reglas['p7r1c1'] = array('regla'=>'requerido');
-        if($p7r1c1==1){
-            $arr_reglas['p7r8c2'] = array('regla'=>'al_menos_n_chk', 'val_n'=>1, 'arr_cmp_nom'=>array('p7r1c2','p7r2c2','p7r3c2','p7r4c2','p7r5c2','p7r6c2','p7r7c2','p7r8c2'));
-        }
-        
-        $arr_reglas['p8r1c1'] = array('regla'=>'requerido');
-        if($p8r1c1==1){
-            $arr_reglas['p8r17c2'] = array('regla'=>'al_menos_n_chk', 'val_n'=>1, 'arr_cmp_nom'=>array('p8r1c2','p8r2c2','p8r3c2','p8r4c2','p8r5c2','p8r6c2','p8r7c2','p8r8c2','p8r9c2','p8r10c2','p8r11c2','p8r12c2','p8r13c2','p8r14c2','p8r15c2','p8r16c2','p8r17c2'));
-        }
-        //Agricultura 
-        if($p3r1==1){
-            $arr_reglas['p9Ar1c1'] = array('regla'=>'requerido');
-            for($r=1; $r<=5; $r++){
-                if($arr_valor['p9Ar'.$r.'c1']!=""){
-                    $arr_reglas['p9Ar'.$r.'c2'] = array('regla'=>'requerido');
-                    $arr_reglas['p9Ar'.$r.'c3'] = array('regla'=>'requerido');
-                    if($arr_valor['p9Ar'.$r.'c3']!=""){
-                        $arr_reglas['p9Ar'.$r.'c5'] = array('regla'=>'requerido');
-                    }
-                    $arr_reglas['p9Ar'.$r.'c6'] = array('regla'=>'suma_igual_a_N', 'val_n'=>100, 'arr_cmp_nom'=>array('p9Ar'.$r.'c5','p9Ar'.$r.'c6'));
-                    if($arr_valor['p9Ar'.$r.'c4']!=""){
-                        $arr_reglas['p9Ar'.$r.'c6'] = array('regla'=>'requerido');
-                    }
-                    
-                }
-            }
-        }
-        //Ganadería
-        if($p3r2==1){
-            $arr_reglas['p9Gr1c1'] = array('regla'=>'requerido');
-            for($r=1; $r<=10; $r++){
-                if($arr_valor['p9Gr'.$r.'c1']!=""){
-                    $arr_reglas['p9Gr'.$r.'c2'] = array('regla'=>'requerido');
-                    $arr_reglas['p9Gr'.$r.'c3'] = array('regla'=>'requerido');
-                    $arr_reglas['p9Gr'.$r.'c4'] = array('regla'=>'requerido');
-                    if($arr_valor['p9Gr'.$r.'c4']!=""){
-                        $arr_reglas['p9Gr'.$r.'c6'] = array('regla'=>'requerido');
-                    }
-                    $arr_reglas['p9Gr'.$r.'c7'] = array('regla'=>'suma_igual_a_N', 'val_n'=>100, 'arr_cmp_nom'=>array('p9Gr'.$r.'c6','p9Gr'.$r.'c7'));
-                    if($arr_valor['p9Gr'.$r.'c5']!=""){
-                        $arr_reglas['p9Gr'.$r.'c7'] = array('regla'=>'requerido');
-                    }
-                }
-            }
-        }
-        //Acuacultura y pesca
-        if($p3r3==1 || $p3r4==1){
-            $arr_reglas['p9APr1c1'] = array('regla'=>'requerido');
-            for($r=1; $r<=5; $r++){
-                if($arr_valor['p9APr'.$r.'c1']!=""){
-                    $arr_reglas['p9APr'.$r.'c2'] = array('regla'=>'requerido');
-                    $arr_reglas['p9APr'.$r.'c3'] = array('regla'=>'requerido');
-                    $arr_reglas['p9APr'.$r.'c4'] = array('regla'=>'requerido');
-                    if($arr_valor['p9APr'.$r.'c4']!=""){
-                        $arr_reglas['p9APr'.$r.'c6'] = array('regla'=>'requerido');
-                    }
-                    $arr_reglas['p9Gr'.$r.'c7'] = array('regla'=>'suma_igual_a_N', 'val_n'=>100, 'arr_cmp_nom'=>array('p9APr'.$r.'c6','p9APr'.$r.'c7'));
-                    if($arr_valor['p9APr'.$r.'c5']!=""){
-                        $arr_reglas['p9APr'.$r.'c7'] = array('regla'=>'requerido');
-                    }
-                }
-            }
-        }
-        //Ganadería
-        if($p3r2==1){
-            $arr_reglas['p10Gr1c1'] = array('regla'=>'requerido');
-            if($p10Gr1c1==1){
-                $arr_reglas['p10Gr2c1'] = array('regla'=>'requerido');
-                $arr_reglas['p10Gr2c2'] = array('regla'=>'requerido');
-                $arr_reglas['p10Gr3c1'] = array('regla'=>'requerido');
-                $arr_reglas['p10Gr4c1'] = array('regla'=>'requerido');
-                $arr_reglas['p10Gr5c1'] = array('regla'=>'requerido');
-            }
-        }
-        //
-        //Acuacultura
-        if($p3r4==1){
-            $arr_reglas['p10Ar1c1'] = array('regla'=>'requerido');
-            if($p10Ar1c1==1){
-                $arr_reglas['p10Ar2c1'] = array('regla'=>'requerido');
-                $arr_reglas['p10Ar2c2'] = array('regla'=>'requerido');
-                $arr_reglas['p10Ar3c1'] = array('regla'=>'requerido');
-                $arr_reglas['p10Ar4c1'] = array('regla'=>'requerido');
-                $arr_reglas['p10Ar5c1'] = array('regla'=>'requerido');
-            }
-        }
-        //si es agr, gan, silv
-        if($p3r1==1 || $p3r2==1 || $p3r5==1){
-            $arr_reglas['p11'] = array('regla'=>'requerido');
-            for($r=1; $r<=10; $r++){
-                if($arr_valor['p11Fr'.$r.'c1']){
-                    $arr_reglas['p11Fr'.$r.'c2'] = array('regla'=>'requerido');
-                    $arr_reglas['p11Fr'.$r.'c3'] = array('regla'=>'requerido');
-                    $arr_reglas['p11Fr'.$r.'c4'] = array('regla'=>'requerido');
-                    $arr_reglas['p11Fr'.$r.'c5'] = array('regla'=>'requerido');
-                }
-            }
-            for($r=1; $r<=6; $r++){
-                if($arr_valor['p11Hr'.$r.'c1']){
-                    $arr_reglas['p11Hr'.$r.'c2'] = array('regla'=>'requerido');
-                    $arr_reglas['p11Hr'.$r.'c3'] = array('regla'=>'requerido');
-                    $arr_reglas['p11Hr'.$r.'c4'] = array('regla'=>'requerido');
-                }
-            }
-            for($r=1; $r<=8; $r++){
-                if($arr_valor['p11Ir'.$r.'c1']){
-                    $arr_reglas['p11Ir'.$r.'c2'] = array('regla'=>'requerido');
-                    $arr_reglas['p11Ir'.$r.'c3'] = array('regla'=>'requerido');
-                    $arr_reglas['p11Ir'.$r.'c4'] = array('regla'=>'requerido');
-                }
-            }
-        }
-        //si es agr, gan
-        if($p3r1==1 || $p3r2==1){
-            $arr_reglas['p12AGr1c1'] = array('regla'=>'requerido');
-            $arr_reglas['p12AGr2c1'] = array('regla'=>'requerido');
-            $arr_reglas['p12AGr3c1'] = array('regla'=>'requerido');
-            $arr_reglas['p12AGr4c1'] = array('regla'=>'requerido');
-            
-            if($p12AGr1c1==1){
-                $arr_reglas['p12AGr1c2'] = array('regla'=>'requerido');
-                $arr_reglas['p12AGr1c3'] = array('regla'=>'requerido');
-            }
-            if($p12AGr2c1==1){
-                $arr_reglas['p12AGr2c2'] = array('regla'=>'requerido');
-                $arr_reglas['p12AGr2c3'] = array('regla'=>'requerido');
-            }
-            if($p12AGr3c1==1){
-                $arr_reglas['p12AGr3c2'] = array('regla'=>'requerido');
-            }
-        }
-        
-        $arr_reglas['p14r1c1'] = array('regla'=>'requerido');
-        if($p14r1c1!=""){
-            $arr_reglas['p14r1c2'] = array('regla'=>'requerido');
-        }
-        $arr_reglas['p15'] = array('regla'=>'requerido');
-        $this->arr_reglas = $arr_reglas;
+    private function setArrReglasDeC01M02(){
+    	$arr_valor = $this->getArrValorCampos();
+    	extract($arr_valor, EXTR_OVERWRITE);
+    	$arr_reglas = array();
+    	
+    	$arr_reglas['m1p1'] = array('regla'=>'requerido');
+    	$arr_reglas['m1p2'] = array('regla'=>'requerido');
+    	$arr_reglas['m1p3'] = array('regla'=>'requerido');
+    	$arr_reglas['m1p4'] = array('regla'=>'requerido');
+    	$arr_reglas['m1p5'] = array('regla'=>'requerido');
+    	$arr_reglas['m1p6'] = array('regla'=>'requerido');
+    	$arr_reglas['m1p7'] = array('regla'=>'requerido');
+    	$arr_reglas['m1p8'] = array('regla'=>'requerido');
+    	$arr_reglas['m1p9'] = array('regla'=>'requerido');
+    	
+    	
+    	$this->arr_reglas = $arr_reglas;
     }
     /**
-     * Se define el arreglo de reglas para el cuestionario para gobiernos estatales
+     * Reglas de validación para cat_cuestionario_id=1 cat_cuest_modulo_id=3
      */
-    private function setArrReglasDeC02() {
-        extract($this->getArrValorCampos(), EXTR_OVERWRITE);
-        $arr_reglas = array();
-        $arr_reglas['p1'] = array('regla'=>'requerido');
-        $arr_reglas['p2r1c1'] = array('regla'=>'requerido');
-        if($p2r1c1==1){
-            $arr_reglas['p2r2c1'] = array('regla'=>'requerido');
-        }
-        $arr_reglas['p3r1c1'] = array('regla'=>'requerido');
-        if($p3r1c1==1){
-            $arr_reglas['p3r2c1'] = array('regla'=>'requerido');
-            $arr_reglas['p3r3c1'] = array('regla'=>'requerido');
-            $arr_reglas['p3r4c1'] = array('regla'=>'requerido');
-        }
-        $arr_reglas['p4'] = array('regla'=>'requerido');
-        $arr_reglas['p5'] = array('regla'=>'requerido');
-        $arr_reglas['p6r1c1'] = array('regla'=>'requerido');
-        $arr_reglas['p6r2c1'] = array('regla'=>'requerido');
-        $arr_reglas['p7r1c1'] = array('regla'=>'requerido');
-        if($p7r1c1==1){
-        	$arr_reglas['p7r2c1'] = array('regla'=>'requerido');
-        	if($p7r2c1==1){
-        		$arr_reglas['p7r3c1'] = array('regla'=>'requerido');
-        	}
-        }
-        $arr_reglas['p8r1c1'] = array('regla'=>'requerido');
-        if($p8r1c1==1){
-        	$arr_reglas['p8r2c1'] = array('regla'=>'requerido');
-        	if($p8r2c1==1){
-        		$arr_reglas['p8r3c1'] = array('regla'=>'requerido');
-        	}
-        }
-        $this->arr_reglas = $arr_reglas;
+    private function setArrReglasDeC01M03(){
+    	$arr_valor = $this->getArrValorCampos();
+    	extract($arr_valor, EXTR_OVERWRITE);
+    	$arr_reglas = array();
+    	
+    	$arr_reglas['m2p1'] = array('regla'=>'requerido');
+        $arr_reglas['m2p2'] = array('regla'=>'requerido');
+        $arr_reglas['m2p3'] = array('regla'=>'requerido');
+        $arr_reglas['m2p4'] = array('regla'=>'requerido');
+        $arr_reglas['m2p5r1'] = array('regla'=>'requerido');
+        $arr_reglas['m2p5r2'] = array('regla'=>'requerido');
+        $arr_reglas['m2p5r3'] = array('regla'=>'requerido');
+        $arr_reglas['m2p5r4'] = array('regla'=>'requerido');
+        $arr_reglas['m2p6r1'] = array('regla'=>'requerido');
+        $arr_reglas['m2p6r2'] = array('regla'=>'requerido');
+        $arr_reglas['m2p6r3'] = array('regla'=>'requerido');
+        $arr_reglas['m2p6r4'] = array('regla'=>'requerido');
+        $arr_reglas['m2p6r5'] = array('regla'=>'requerido');
+        $arr_reglas['m2p6r6'] = array('regla'=>'requerido');
+        $arr_reglas['m2p6r7'] = array('regla'=>'requerido');
+        $arr_reglas['m2p6r8'] = array('regla'=>'requerido');
+        $arr_reglas['m2p7r1'] = array('regla'=>'requerido');
+        $arr_reglas['m2p7r2'] = array('regla'=>'requerido');
+        $arr_reglas['m2p7r3'] = array('regla'=>'requerido');
+        $arr_reglas['m2p7r4'] = array('regla'=>'requerido');
+        $arr_reglas['m2p7r5'] = array('regla'=>'requerido');
+        $arr_reglas['m2p7r6'] = array('regla'=>'requerido');
+        $arr_reglas['m2p8r1'] = array('regla'=>'requerido');
+        $arr_reglas['m2p8r2'] = array('regla'=>'requerido');
+        $arr_reglas['m2p8r3'] = array('regla'=>'requerido');
+        $arr_reglas['m2p8r4'] = array('regla'=>'requerido');
+        $arr_reglas['m2p8r5'] = array('regla'=>'requerido');
+        $arr_reglas['m2p8r6'] = array('regla'=>'requerido');
+        $arr_reglas['m2p8r7'] = array('regla'=>'requerido');
+        $arr_reglas['m2p8r8'] = array('regla'=>'requerido');
+        $arr_reglas['m2p8r9'] = array('regla'=>'requerido');
+        $arr_reglas['m2p8r10'] = array('regla'=>'requerido');
+        $arr_reglas['m2p9r1'] = array('regla'=>'requerido');
+        $arr_reglas['m2p9r2'] = array('regla'=>'requerido');
+        $arr_reglas['m2p9r3'] = array('regla'=>'requerido');
+        $arr_reglas['m2p9r4'] = array('regla'=>'requerido');
+        $arr_reglas['m2p9r5'] = array('regla'=>'requerido');
+        $arr_reglas['m2p9r6'] = array('regla'=>'requerido');
+        $arr_reglas['m2p10r1'] = array('regla'=>'requerido');
+        $arr_reglas['m2p10r2'] = array('regla'=>'requerido');
+        $arr_reglas['m2p10r3'] = array('regla'=>'requerido');
+        $arr_reglas['m2p10r4'] = array('regla'=>'requerido');
+        $arr_reglas['m2p10r5'] = array('regla'=>'requerido');
+        $arr_reglas['m2p10r6'] = array('regla'=>'requerido');
+        $arr_reglas['m2p10r7'] = array('regla'=>'requerido');
+        $arr_reglas['m2p11r1'] = array('regla'=>'requerido');
+        $arr_reglas['m2p11r2'] = array('regla'=>'requerido');
+        $arr_reglas['m2p11r3'] = array('regla'=>'requerido');
+        $arr_reglas['m2p11r4'] = array('regla'=>'requerido');
+        $arr_reglas['m2p11r5'] = array('regla'=>'requerido');
+        $arr_reglas['m2p11r6'] = array('regla'=>'requerido');
+        $arr_reglas['m2p12r1'] = array('regla'=>'requerido');
+        $arr_reglas['m2p12r2'] = array('regla'=>'requerido');
+        $arr_reglas['m2p12r3'] = array('regla'=>'requerido');
+        $arr_reglas['m2p12r4'] = array('regla'=>'requerido');
+        $arr_reglas['m2p12r5'] = array('regla'=>'requerido');
+        $arr_reglas['m2p12r6'] = array('regla'=>'requerido');
+        $arr_reglas['m2p13r1'] = array('regla'=>'requerido');
+        $arr_reglas['m2p13r2'] = array('regla'=>'requerido');
+        $arr_reglas['m2p13r3'] = array('regla'=>'requerido');
+        $arr_reglas['m2p13r4'] = array('regla'=>'requerido');
+        $arr_reglas['m2p14r1'] = array('regla'=>'requerido');
+        $arr_reglas['m2p14r2'] = array('regla'=>'requerido');
+        $arr_reglas['m2p14r3'] = array('regla'=>'requerido');
+        $arr_reglas['m2p14r4'] = array('regla'=>'requerido');
+        $arr_reglas['m2p14r5'] = array('regla'=>'requerido');
+        $arr_reglas['m2p14r6'] = array('regla'=>'requerido');
+    	$this->arr_reglas = $arr_reglas;
     }
     /**
-     * Se define el arreglo de reglas para el cuestionario para gobiernos municipales
+     * Reglas de validación para cat_cuestionario_id=1 cat_cuest_modulo_id=4
      */
-    private function setArrReglasDeC03() {
-        extract($this->getArrValorCampos(), EXTR_OVERWRITE);
-        $arr_reglas = array();
-        $arr_reglas['municipio'] = array('regla'=>'requerido');
-        $arr_reglas['p1'] = array('regla'=>'requerido');
-        $arr_reglas['p1'] = array('regla'=>'requerido');
-        $arr_reglas['p2r1c1'] = array('regla'=>'requerido');
-        if($p2r1c1==1){
-            $arr_reglas['p2r2c1'] = array('regla'=>'requerido');
-        }
-        $arr_reglas['p3r1c1'] = array('regla'=>'requerido');
-        if($p3r1c1==1){
-            $arr_reglas['p3r2c1'] = array('regla'=>'requerido');
-            $arr_reglas['p3r3c1'] = array('regla'=>'requerido');
-            $arr_reglas['p3r4c1'] = array('regla'=>'requerido');
-            $arr_reglas['p3r5c1'] = array('regla'=>'requerido');
-            $arr_reglas['p3r6c1'] = array('regla'=>'requerido');
-            $arr_reglas['p3r7c1'] = array('regla'=>'requerido');
-        }
-        $arr_reglas['p4r1c1'] = array('regla'=>'requerido');
-        if($p4r1c1){
-            $arr_reglas['p4r2c1'] = array('regla'=>'requerido');
-        }
-        $arr_reglas['p5r1c1'] = array('regla'=>'requerido');
-        if($p5r1c1==1){
-        	$arr_reglas['p5r2c1'] = array('regla'=>'requerido');
-        	if($p5r2c1==1){
-        		$arr_reglas['p5r3c1'] = array('regla'=>'requerido');
-        	}
-        }
-        
-        $this->arr_reglas = $arr_reglas;
+    private function setArrReglasDeC01M04(){
+    	$arr_valor = $this->getArrValorCampos();
+    	extract($arr_valor, EXTR_OVERWRITE);
+    	$arr_reglas = array();
+    	$arr_reglas['m3p1'] = array('regla'=>'requerido');
+    	$arr_reglas['m3p2'] = array('regla'=>'requerido');
+    	$arr_reglas['m3p3'] = array('regla'=>'requerido');
+    	$arr_reglas['m3p4'] = array('regla'=>'requerido');
+    	$arr_reglas['m3p5'] = array('regla'=>'requerido');
+    	$arr_reglas['m3p6'] = array('regla'=>'requerido');
+    	$arr_reglas['m3p7'] = array('regla'=>'requerido');
+    	$arr_reglas['m3p8'] = array('regla'=>'requerido');
+    	$arr_reglas['m3p9'] = array('regla'=>'requerido');
+    	$arr_reglas['m3p10'] = array('regla'=>'requerido');
+    	$this->arr_reglas = $arr_reglas;
     }
+    /**
+     * Reglas de validación para cat_cuestionario_id=1 cat_cuest_modulo_id=5
+     */
+    private function setArrReglasDeC01M05(){
+    	$arr_valor = $this->getArrValorCampos();
+    	extract($arr_valor, EXTR_OVERWRITE);
+    	$arr_reglas = array();
+    	
+    	if(intval($persona_tipo)==1){
+    		$arr_reglas['m4p1'] = array('regla'=>'requerido');
+    		$arr_reglas['m4p2r1'] = array('regla'=>'requerido');
+    		$arr_reglas['m4p2r2'] = array('regla'=>'requerido');
+    		$arr_reglas['m4p2r3'] = array('regla'=>'requerido');
+    		$arr_reglas['m4p2r4'] = array('regla'=>'requerido');
+    		$arr_reglas['m4p3'] = array('regla'=>'requerido');
+    	}elseif(intval($persona_tipo)==2){
+    		$arr_reglas['m4p4r1'] = array('regla'=>'requerido');
+    		$arr_reglas['m4p4r2'] = array('regla'=>'requerido');
+    		$arr_reglas['m4p4r3'] = array('regla'=>'requerido');
+    		$arr_reglas['m4p5r1'] = array('regla'=>'requerido');
+    		$arr_reglas['m4p5r2'] = array('regla'=>'requerido');
+    		$arr_reglas['m4p5r3'] = array('regla'=>'requerido');
+    		$arr_reglas['m4p6'] = array('regla'=>'requerido');
+    	}
+    	$this->arr_reglas = $arr_reglas;
+    }
+    /**
+     * Reglas de validación para cat_cuestionario_id=1 cat_cuest_modulo_id=6
+     */
+    private function setArrReglasDeC01M06(){
+    	$arr_valor = $this->getArrValorCampos();
+    	extract($arr_valor, EXTR_OVERWRITE);
+    	$arr_reglas = array();
+    	$arr_reglas['m5p1'] = array('regla'=>'requerido');
+    	$arr_reglas['m5p2'] = array('regla'=>'requerido');
+    	$arr_reglas['m5p3'] = array('regla'=>'requerido');
+    	$arr_reglas['m5p4'] = array('regla'=>'requerido');
+    	$arr_reglas['m5p5'] = array('regla'=>'requerido');
+    	$arr_reglas['m5p6'] = array('regla'=>'requerido');
+    	$arr_reglas['m5p7'] = array('regla'=>'requerido');
+    	$arr_reglas['m5p8'] = array('regla'=>'requerido');
+    	$arr_reglas['m5p9'] = array('regla'=>'requerido');
+    	$this->arr_reglas = $arr_reglas;
+    }
+    /**
+     * Reglas de validación para cat_cuestionario_id=1 cat_cuest_modulo_id=7
+     */
+    private function setArrReglasDeC01M07(){
+    	$arr_valor = $this->getArrValorCampos();
+    	extract($arr_valor, EXTR_OVERWRITE);
+    	$arr_reglas = array();
+    	$arr_reglas['m6p1'] = array('regla'=>'requerido');
+    	$arr_reglas['m6p2'] = array('regla'=>'requerido');
+    	$arr_reglas['m6p3'] = array('regla'=>'requerido');
+    	$arr_reglas['m6p4'] = array('regla'=>'requerido');
+    	$arr_reglas['m6p5r1'] = array('regla'=>'requerido');
+    	$arr_reglas['m6p5r2'] = array('regla'=>'requerido');
+    	$arr_reglas['m6p6'] = array('regla'=>'requerido');
+    	$this->arr_reglas = $arr_reglas;
+    }
+    /**
+     * Reglas de validación para cat_cuestionario_id=1 cat_cuest_modulo_id=8
+     */
+    private function setArrReglasDeC01M08(){
+    	$arr_valor = $this->getArrValorCampos();
+    	extract($arr_valor, EXTR_OVERWRITE);
+    	$arr_reglas = array();
+    	$arr_reglas['m7p1'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p2'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p3'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p4'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p5'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p6'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p7'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p8'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p9'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p10'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p11'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p12'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p13'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p14'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p15'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p16'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p17'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p18'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p19'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p20'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p21'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p22'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p23'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p24'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p25'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p26'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p27'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p28'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p29'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p30'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p31'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p32'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p33'] = array('regla'=>'requerido');
+    	$arr_reglas['m7p34'] = array('regla'=>'requerido');
+    	$this->arr_reglas = $arr_reglas;
+    }
+       
     /**
      * Devuelve el arreglo de reglas del cuestionario actual
      * @return array

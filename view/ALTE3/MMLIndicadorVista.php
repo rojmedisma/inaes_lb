@@ -19,7 +19,9 @@
 		|---------------------------------------------------------|
 		-->
 	<body class="hold-transition sidebar-mini">
-		<?php include_once 'modulos/FrmCeroMML.php';?>
+		<form action="" id="frm_cero" name="frm_cero"  method="post">
+		<?php include 'modulos/MML/EnFrmCero.php';?>
+		</form>
 		<div class="wrapper">
 			<!-- Navbar -->
 			<nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -52,8 +54,8 @@
 								<?php
 								$accion_act = $controlador_obj->getAccion();
 								switch($accion_act){
-									case 'vista_ind':	include_once 'modulos/MMLIndicadorVista/Indicadores.php';	break;
-									case 'vista_var':	include_once 'modulos/MMLIndicadorVista/VariablesDef.php';	break;
+									case 'vista_ind':	include_once 'modulos/MML/IndicadorVista/Indicadores.php';	break;
+									case 'vista_var':	include_once 'modulos/MML/IndicadorVista/VariablesDef.php';	break;
 								}
 								?>
 							</div>

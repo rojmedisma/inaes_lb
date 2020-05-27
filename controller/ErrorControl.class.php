@@ -91,6 +91,14 @@ class ErrorControl extends ControladorBase{
 		$this->txt_error = "Para la ruta previamente especificada, es necesario mandar el argumento <em>cat_cuestionario_id</em>.";
 	}
 	/**
+	 * Acción que despliega el error producido cuando en la ruta de dirección no se manda el argumento cat_cuest_modulo_id
+	 */
+	public function sin_arg_cat_cuest_modulo_id() {
+		$this->tit_error = "Argumento <em>cat_cuest_modulo_id</em> no identificado";
+		$this->txt_error = "Para la ruta previamente especificada, es necesario mandar el argumento <em>cat_cuest_modulo_id</em>.";
+	}
+	
+	/**
 	 * Acción que despliega el error producido cuando no se tienen los permisos necesarios para realizar la acción ejecutada, también es posible que apareza si la sesión ha caducado.
 	 */
 	public function sin_permisos() {
@@ -107,6 +115,15 @@ class ErrorControl extends ControladorBase{
 		$this->txt_error = "Por motivos descosidos, el valor del campo estado se perdió, este dato es heredado a partir del campo estado del usuario que creó el cuestionario.";
 	}
 	/**
+	 * Acción que despliega el error de campo vacío cuando el valor de dicho campo es requerido
+	 */
+	public function valor_de_campo_vacio(){
+		$tbl_nom = (isset($_REQUEST['tbl_nom']))? $_REQUEST['tbl_nom'] : '[Nombre de tabla no identificada ]';
+		$cmp_nom = (isset($_REQUEST['cmp_nom']))? $_REQUEST['cmp_nom'] : '[Nombre de campo no identificado]';
+		$this->tit_error = "Valor de campo vacío";
+		$this->txt_error = "El valor del campo <em>".$cmp_nom."</em> perteneciente a la tabla <em>".$tbl_nom."</em>; se encuentra vacío y se requiere que tenga información.";
+	}
+	/**
 	 * Esta función se ejecuta al final del llamado de la respectiva acción de error
 	 */
 	public function __destruct() {
@@ -114,4 +131,5 @@ class ErrorControl extends ControladorBase{
 		$txt_error = "Error: ".$this->tit_error.", Descripción: ".$this->txt_error;
 		$log->setRegLog('', '', 'Error', 'Error', $txt_error);
 	}
+	
 }

@@ -5,7 +5,11 @@
  *
  */
 class Guardar{
+	private $bd;
 	private $cmp_id_val;
+	public function __construct() {
+		$this->bd = new BaseDatos();
+	}
 	/**
 	 * Ejecuta el guardado para cuando el registro es de tipo catálogo
 	 * @param array $arr_cmps	Arreglo de campos a ser actualizados o insertados
@@ -13,7 +17,6 @@ class Guardar{
 	 * @param string $cmp_id_val
 	 */
 	public function setGuardaCatalogo($arr_cmps, $tbl_cat_nom, $cmp_id_val){
-		$bd = new BaseDatos();
 		$cmp_id_nom = $tbl_cat_nom."_id";	//cat_usuario + _id
 		if($cmp_id_val){
 			//Modificar registro
@@ -23,12 +26,12 @@ class Guardar{
 					$arr_act[] = "`".$cmp_nom."` = ".$cmp_val;
 				}
 			}
-			$qry_act = "UPDATE `".$bd->getBD()."`.`".$tbl_cat_nom."` SET ".implode(",", array_values($arr_act))." WHERE `".$cmp_id_nom."` ='".$cmp_id_val."' LIMIT 1;";
-			$bd->ejecutaQry($qry_act);
+			$qry_act = "UPDATE `".$this->bd->getBD()."`.`".$tbl_cat_nom."` SET ".implode(",", array_values($arr_act))." WHERE `".$cmp_id_nom."` ='".$cmp_id_val."' LIMIT 1;";
+			$this->bd->ejecutaQry($qry_act);
 		}else{
 			//Nuevo registro
-			$qry_act = "INSERT INTO `".$bd->getBD()."`.`".$tbl_cat_nom."` (".implode(",",array_keys($arr_cmps)).") VALUES (".implode(",",array_values($arr_cmps)).");";
-			$cmp_id_val = $bd->ejecutaQryInsert($qry_act);
+			$qry_act = "INSERT INTO `".$this->bd->getBD()."`.`".$tbl_cat_nom."` (".implode(",",array_keys($arr_cmps)).") VALUES (".implode(",",array_values($arr_cmps)).");";
+			$cmp_id_val = $this->bd->ejecutaQryInsert($qry_act);
 		}
 		$this->cmp_id_val = $cmp_id_val;
 	}
@@ -39,7 +42,8 @@ class Guardar{
 	 * @param string $cuestionario_id
 	 */
 	public function setGuardaCuest($arr_cmps, $cat_cuestionario_id, $cuestionario_id){
-		$bd = new BaseDatos();
+		$log = new Log();
+		$txt_log = "";
 		if($cuestionario_id!=""){
 			//Modificar registro
 			foreach($arr_cmps as $tbl_nom => $arr_cmp_det){
@@ -49,19 +53,42 @@ class Guardar{
 						$arr_act[] = "`".$tbl_nom."`.`".$cmp_nom."` = ".$cmp_val;
 					}
 				}
-				$qry_act = "UPDATE `".$bd->getBD()."`.`".$tbl_nom."` SET ".implode(",", array_values($arr_act))." WHERE `cuestionario_id` ='".$cuestionario_id."' LIMIT 1;";
-				$bd->ejecutaQry($qry_act);
+				$qry_act = "UPDATE `".$this->bd->getBD()."`.`".$tbl_nom."` SET ".implode(",", array_values($arr_act))." WHERE `cuestionario_id` ='".$cuestionario_id."' LIMIT 1;";
+				$this->bd->ejecutaQry($qry_act);
 			}
+			//Se actualiza la información de la tabla C00
+			$this->actualizaEnTblC00($cuestionario_id);
+			$txt_log = "Se actualizó cuestionario";
 		}else{
 			//Nuevo registro
 			$cuestionario_id = $this->crearCuestionarioId($cat_cuestionario_id);
+			$usuario = new Usuario();
+			$usuario->setArrUsuario();
+			$cat_usuario_id = $usuario->get_val_campo("cat_usuario_id");
+			
+			//Se inserta el registro de la tabla c00
+			$arr_cmps_c00 = array(
+					'cuestionario_id'=>txt_sql($cuestionario_id),
+					'cat_cuestionario_id'=>txt_sql($cat_cuestionario_id),
+					'cat_usuario_id'=>txt_sql($cat_usuario_id),
+					'cat_estado_id'=>txt_sql(""),
+					'estatus_cuest'=>txt_sql(""),
+					'creacion_fecha'=>"IFNULL(`creacion_fecha`, CURDATE())",
+					'creacion_hora'=>"IFNULL(`creacion_hora`, CURTIME())",
+			);
+			$qry_act = "INSERT INTO `".$this->bd->getBD()."`.`c00` (".implode(",",array_keys($arr_cmps_c00)).") VALUES (".implode(",",array_values($arr_cmps_c00)).");";
+			$this->bd->ejecutaQry($qry_act);
+			
+			//Se inserta el registro en el resto de las tablas
 			foreach($arr_cmps as $tbl_nom => $arr_cmp_det){
 				$arr_cmps_ins = array_merge(array('cuestionario_id'=>txt_sql($cuestionario_id)),$arr_cmp_det);
-				$qry_act = "INSERT INTO `".$bd->getBD()."`.`".$tbl_nom."` (".implode(",",array_keys($arr_cmps_ins)).") VALUES (".implode(",",array_values($arr_cmps_ins)).");";
-				$bd->ejecutaQry($qry_act);
+				$qry_act = "INSERT INTO `".$this->bd->getBD()."`.`".$tbl_nom."` (".implode(",",array_keys($arr_cmps_ins)).") VALUES (".implode(",",array_values($arr_cmps_ins)).");";
+				$this->bd->ejecutaQry($qry_act);
 			}
+			$txt_log = "Se creó cuestionario";
 		}
 		$this->cmp_id_val = $cuestionario_id;
+		$log->setRegLog('cuestionario_id', $cuestionario_id, 'guardar', 'Aviso', $txt_log);
 	}
 	/**
 	 * Devuelve el Id del registro insertado, cuando el guardado realizó un insert
@@ -88,4 +115,17 @@ class Guardar{
 		}
 		return $parte1.$parte2.$parte3.$parte4;
 	}
+	/**
+	 * Se actualizan los valores necesarios en la tabla c00
+	 * @param integer $cuestionario_id
+	 */
+	private function actualizaEnTblC00($cuestionario_id){
+		$arr_act = array(
+				"`modifica_fecha` = CURDATE()",
+				"`modifica_hora`= CURTIME()",
+		);
+		$qry_act = "UPDATE `".$this->bd->getBD()."`.`c00` SET ".implode(",", array_values($arr_act))." WHERE `cuestionario_id` = '".$cuestionario_id."';";
+		$this->bd->ejecutaQry($qry_act);
+	}
+	
 }

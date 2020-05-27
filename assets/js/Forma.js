@@ -17,7 +17,7 @@ var Forma = function(){
 	 * Para los campos de tipo fecha, despliega el calendario
 	 */
 	function cmpFecha(){
-		$('.fecha').datepicker({
+		$('.fecha').daterangepicker({
 			autoclose: true,
 			format:'yyyy-mm-dd'
 	    });
@@ -105,6 +105,67 @@ var Forma = function(){
 			}
 		});
 	}
+	function navTabFrmActivar(v_cat_cuest_modulo_id, v_ver_res_gen){
+		try{
+			//alert("v_ver_res_gen: "+v_ver_res_gen);
+			if(v_cat_cuest_modulo_id>0){
+				//Para las pestañas de formulario
+				var id_nav_tab = 'tab_mod'+v_cat_cuest_modulo_id;
+				$('#'+id_nav_tab).addClass('active');
+				$('#'+id_nav_tab+'_tab').addClass('active');
+			}else if(v_ver_res_gen){
+				$('#tab_resultados').addClass('active');
+				$('#tab_resultados_tab').addClass('active');
+			}else{
+				$('#tab_instrucciones').addClass('active');
+				$('#tab_instrucciones_tab').addClass('active');
+			}
+		}catch(e){
+			alert("Error interno: ["+e.message+"]");
+			console.log(e);
+		}
+	}
+	function grafica_resultados(v_ver_res_gen, o_res_indicador){
+		if(v_ver_res_gen==1 && o_res_indicador.length>0){
+			var total_valora = 0;
+			var o_data = [];
+			for(i in o_res_indicador){
+				total_valora = o_res_indicador[i].cat_cuest_modulo.porcentaje;
+				o_data[i] = {
+						"cat_cuest_modulo_desc":o_res_indicador[i].cat_cuest_modulo.descripcion,
+						"total_valora":total_valora
+				};
+			}
+			console.log(o_data);
+			
+			
+			// Themes begin
+			am4core.useTheme(am4themes_animated);
+			// Themes end
+
+			/* Create chart instance */
+			var chart = am4core.create("chartdiv", am4charts.RadarChart);
+
+			/* Add data */
+			chart.data = o_data;
+			/* Create axes */
+			var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+			categoryAxis.dataFields.category = "cat_cuest_modulo_desc";
+
+			var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+			valueAxis.renderer.axisFills.template.fill = chart.colors.getIndex(2);
+			valueAxis.renderer.axisFills.template.fillOpacity = 0.05;
+			valueAxis.max = 100;
+			valueAxis.min = 0;
+
+			/* Create and configure series */
+			var series = chart.series.push(new am4charts.RadarSeries());
+			series.dataFields.valueY = "total_valora";
+			series.dataFields.categoryX = "cat_cuest_modulo_desc";
+			series.name = "valora";
+			series.strokeWidth = 3;
+		}
+	}
 	return {
 		activaCmpEventos:function(){
 			cmpNum();
@@ -116,5 +177,12 @@ var Forma = function(){
 		verNombreCampo:function(){
 			$(".campo_nombre").toggle();
 		},
+		activaFormaEventos:function(v_cat_cuest_modulo_id, v_ver_res_gen, o_res_indicador){
+			var vi_cat_cuest_modulo_id = parseInt(v_cat_cuest_modulo_id);
+			var vi_v_ver_res_gen = parseInt(v_ver_res_gen);
+			navTabFrmActivar(vi_cat_cuest_modulo_id, vi_v_ver_res_gen);
+			grafica_resultados(vi_v_ver_res_gen, o_res_indicador);
+			
+		}
 	}
 }();

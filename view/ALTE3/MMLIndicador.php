@@ -14,7 +14,9 @@
 		|---------------------------------------------------------|
 		-->
 	<body class="hold-transition sidebar-mini">
-		<?php include_once 'modulos/FrmCeroMML.php';?>
+		<form action="" id="frm_cero" name="frm_cero"  method="post">
+		<?php include 'modulos/MML/EnFrmCero.php';?>
+		</form>
 		<div class="wrapper">
 			<!-- Navbar -->
 			<nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -51,8 +53,12 @@
 							<?php
 							$accion_act = $controlador_obj->getAccion();
 							switch($accion_act){
-								case 'ficha':	include_once 'modulos/MMLIndicador/FichaTecnica.php';	break;
-								case 'var_def':	include_once 'modulos/MMLIndicador/VariableDef.php';	break;
+								case 'ficha':
+									include_once 'modulos/MML/Indicador/FichaTecnica.php';
+									break;
+								case 'var_def':
+									include_once 'modulos/MML/Indicador/VariableDef.php';
+									break;
 							}
 							?>
 						</div><!-- /.card -->

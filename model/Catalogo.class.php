@@ -39,9 +39,9 @@ class Catalogo{
 	 * @param string $cat_estado_id
 	 */
 	public function setListaOpcCatMunicipio($cat_estado_id){
-		$and = " AND `cat_estado_id` LIKE '".$cat_estado_id."'";
+		$and = " AND `cat_estado_id` LIKE '".$cat_estado_id."' ORDER BY `descripcion` ASC ";
 		$arr_cat_municipio = $this->bd->getArrDeTabla("cat_municipio",$and);
-		$lista_opciones = '<option value="" data-desc_val="" data-esp_val="">[SELECCIONAR]</option>';
+		$lista_opciones = '<option value="" data-desc_val="" data-esp_val="">[Seleccionar]</option>';
 		foreach ($arr_cat_municipio as $arr_det_mpo){
 			$cat_municipio_id = $arr_det_mpo['cat_municipio_id'];
 			$desc = $arr_det_mpo['descripcion'];

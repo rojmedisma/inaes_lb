@@ -60,36 +60,45 @@ class Guardar{
 			$this->actualizaEnTblC00($cuestionario_id);
 			$txt_log = "Se actualizó cuestionario";
 		}else{
-			//Nuevo registro
-			$cuestionario_id = $this->crearCuestionarioId($cat_cuestionario_id);
-			$usuario = new Usuario();
-			$usuario->setArrUsuario();
-			$cat_usuario_id = $usuario->get_val_campo("cat_usuario_id");
-			
-			//Se inserta el registro de la tabla c00
-			$arr_cmps_c00 = array(
-					'cuestionario_id'=>txt_sql($cuestionario_id),
-					'cat_cuestionario_id'=>txt_sql($cat_cuestionario_id),
-					'cat_usuario_id'=>txt_sql($cat_usuario_id),
-					'cat_estado_id'=>txt_sql(""),
-					'estatus_cuest'=>txt_sql(""),
-					'creacion_fecha'=>"IFNULL(`creacion_fecha`, CURDATE())",
-					'creacion_hora'=>"IFNULL(`creacion_hora`, CURTIME())",
-			);
-			$qry_act = "INSERT INTO `".$this->bd->getBD()."`.`c00` (".implode(",",array_keys($arr_cmps_c00)).") VALUES (".implode(",",array_values($arr_cmps_c00)).");";
-			$this->bd->ejecutaQry($qry_act);
-			
-			//Se inserta el registro en el resto de las tablas
-			foreach($arr_cmps as $tbl_nom => $arr_cmp_det){
-				$arr_cmps_ins = array_merge(array('cuestionario_id'=>txt_sql($cuestionario_id)),$arr_cmp_det);
-				$qry_act = "INSERT INTO `".$this->bd->getBD()."`.`".$tbl_nom."` (".implode(",",array_keys($arr_cmps_ins)).") VALUES (".implode(",",array_values($arr_cmps_ins)).");";
-				$this->bd->ejecutaQry($qry_act);
-			}
-			$txt_log = "Se creó cuestionario";
+			$log->setRegLog('cuestionario_id', $cuestionario_id, 'setGuardaCuest', 'Error', "Id cuestionario vacío");
 		}
+		$this->cmp_id_val = $cuestionario_id;
+		$log->setRegLog('cuestionario_id', $cuestionario_id, 'setGuardaCuest', 'Aviso', $txt_log);
+	}
+	public function setNuevoCuestionario($arr_lista_tablas, $cat_cuestionario_id){
+		//Nuevo registro
+		$log = new Log();
+		$cuestionario_id = $this->crearCuestionarioId($cat_cuestionario_id);
+		$usuario = new Usuario();
+		$usuario->setArrUsuario();
+		$cat_usuario_id = $usuario->get_val_campo("cat_usuario_id");
+		
+		//Se inserta el registro de la tabla c00
+		$arr_cmps_c00 = array(
+				'cuestionario_id'=>txt_sql($cuestionario_id),
+				'cat_cuestionario_id'=>txt_sql($cat_cuestionario_id),
+				'cat_usuario_id'=>txt_sql($cat_usuario_id),
+				'cat_estado_id'=>txt_sql(""),
+				'estatus_cuest'=>txt_sql(""),
+				'creacion_fecha'=>"IFNULL(`creacion_fecha`, CURDATE())",
+				'creacion_hora'=>"IFNULL(`creacion_hora`, CURTIME())",
+				'borrar'=>txt_sql("2"),
+		);
+		$qry_act = "INSERT INTO `".$this->bd->getBD()."`.`c00` (".implode(",",array_keys($arr_cmps_c00)).") VALUES (".implode(",",array_values($arr_cmps_c00)).");";
+		$this->bd->ejecutaQry($qry_act);
+		
+		//Se inserta el registro en el resto de las tablas
+		foreach($arr_lista_tablas as $tbl_nom){
+			$arr_cmps_ins = array('cuestionario_id'=>txt_sql($cuestionario_id));
+			$qry_act = "INSERT INTO `".$this->bd->getBD()."`.`".$tbl_nom."` (".implode(",",array_keys($arr_cmps_ins)).") VALUES (".implode(",",array_values($arr_cmps_ins)).");";
+			$this->bd->ejecutaQry($qry_act);
+		}
+		$txt_log = "Se creó cuestionario";
+		
 		$this->cmp_id_val = $cuestionario_id;
 		$log->setRegLog('cuestionario_id', $cuestionario_id, 'guardar', 'Aviso', $txt_log);
 	}
+	
 	/**
 	 * Devuelve el Id del registro insertado, cuando el guardado realizó un insert
 	 * @return mixed
@@ -123,6 +132,7 @@ class Guardar{
 		$arr_act = array(
 				"`modifica_fecha` = CURDATE()",
 				"`modifica_hora`= CURTIME()",
+				"`borrar`= NULL",
 		);
 		$qry_act = "UPDATE `".$this->bd->getBD()."`.`c00` SET ".implode(",", array_values($arr_act))." WHERE `cuestionario_id` = '".$cuestionario_id."';";
 		$this->bd->ejecutaQry($qry_act);

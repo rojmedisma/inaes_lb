@@ -171,4 +171,18 @@ function formato_folio($numero){
 		return "";
 	}
 }
+/**
+ * Dividendo / Divisor
+ * @param double $dividendo
+ * @param double $divisor
+ */
+function op_division($dividendo, $divisor){
+	if(!is_numeric($dividendo) || !is_numeric($divisor)){
+		return 0;
+	}elseif($divisor==0){
+		return 0;
+	}else{
+		return $dividendo/$divisor;
+	}
+}
 ?>

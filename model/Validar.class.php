@@ -14,6 +14,7 @@ class Validar{
      * @param array $arr_valor	Arreglo de campos con su valor dentro de la forma actual
      */
     public function serArrReglasDeCuestionario($cat_cuestionario_id, $cat_cuest_modulo_id, $arr_cmps_frm) {
+    	//echo "<br>".json_encode($arr_cmps_frm)."<br>";
     	$this->arr_valor = $arr_cmps_frm;
     	switch (intval($cat_cuestionario_id)){
     		case 1:
@@ -64,9 +65,11 @@ class Validar{
         
         
         foreach($arr_reglas as $campo=>$arr_param){
+        	
             $alerta = "";
             switch($arr_param['regla']){
                 case 'requerido':
+                	
                     if($arr_valor[$campo] == ""){
                         if(isset($arr_param['desc'])){
                             $alerta = '<strong>'.$arr_param['desc'].'</strong> Es requerido';
@@ -98,6 +101,23 @@ class Validar{
                         }
                     }
                     break;
+                case 'al_menos_1_cmp':
+                	if(isset($arr_param['arr_cmp_nom'])){
+                		$al_menos_1_cmp = false;
+                		foreach ($arr_param['arr_cmp_nom'] as $cmp_nom){
+                			if($arr_valor[$cmp_nom]!=""){
+                				$al_menos_1_cmp = true;
+                			}
+                		}
+                		if(!$al_menos_1_cmp){
+                			if(isset($arr_param['desc'])){
+                				$alerta = $arr_param['desc'];
+                			}else{
+                				$alerta = 'Llenar al menos uno de los campos';
+                			}
+                		}
+                	}
+                	break;
                 case 'suma_igual_a_N':
                     //Si la suma da igual a N
                     if(isset($arr_param['arr_cmp_nom']) && isset($arr_param['val_n'])){
@@ -118,7 +138,10 @@ class Validar{
                     }
                     break;
             }
-            $arr_validaciones[$campo] = array("alerta"=>htmlentities($alerta));
+            if($alerta!=""){
+            	$arr_validaciones[$campo] = array("alerta"=>htmlentities($alerta));
+            }
+            
         }
         
         $this->arr_validaciones = $arr_validaciones;
@@ -150,6 +173,7 @@ class Validar{
     	$arr_reglas['ubica_estado'] = array('regla'=>'requerido');
     	$arr_reglas['ubica_municipio'] = array('regla'=>'requerido');
     	$arr_reglas['ubica_localidad_desc'] = array('regla'=>'requerido');
+    	$arr_reglas['ubica_domicilio'] = array('regla'=>'requerido');
     	$arr_reglas['contacto_correo'] = array('regla'=>'requerido');
     	$arr_reglas['contacto_telefono'] = array('regla'=>'requerido');
     	$arr_reglas['contact_whapp'] = array('regla'=>'requerido');
@@ -181,7 +205,6 @@ class Validar{
     	$arr_reglas['m1p8'] = array('regla'=>'requerido');
     	$arr_reglas['m1p9'] = array('regla'=>'requerido');
     	
-    	
     	$this->arr_reglas = $arr_reglas;
     }
     /**
@@ -196,10 +219,16 @@ class Validar{
         $arr_reglas['m2p2'] = array('regla'=>'requerido');
         $arr_reglas['m2p3'] = array('regla'=>'requerido');
         $arr_reglas['m2p4'] = array('regla'=>'requerido');
-        $arr_reglas['m2p5r1'] = array('regla'=>'requerido');
-        $arr_reglas['m2p5r2'] = array('regla'=>'requerido');
-        $arr_reglas['m2p5r3'] = array('regla'=>'requerido');
-        $arr_reglas['m2p5r4'] = array('regla'=>'requerido');
+        
+        
+        $desc = 'Para la pregunta 5, dejar llena al menos una de estas cuatro opciones (Bodegas planas, Silos, Patios, Econobodegas)';
+        $arr_cmp_nom = array('m2p5r1', 'm2p5r2', 'm2p5r3', 'm2p5r4');
+        $arr_reglas['m2p5r1'] = array('regla'=>'al_menos_1_cmp', 'desc'=>$desc, 'arr_cmp_nom'=>$arr_cmp_nom);
+        $arr_reglas['m2p5r2'] = array('regla'=>'al_menos_1_cmp', 'desc'=>$desc, 'arr_cmp_nom'=>$arr_cmp_nom);
+        $arr_reglas['m2p5r3'] = array('regla'=>'al_menos_1_cmp', 'desc'=>$desc, 'arr_cmp_nom'=>$arr_cmp_nom);
+        $arr_reglas['m2p5r4'] = array('regla'=>'al_menos_1_cmp', 'desc'=>$desc, 'arr_cmp_nom'=>$arr_cmp_nom);
+        
+        
         $arr_reglas['m2p6r1'] = array('regla'=>'requerido');
         $arr_reglas['m2p6r2'] = array('regla'=>'requerido');
         $arr_reglas['m2p6r3'] = array('regla'=>'requerido');
@@ -269,7 +298,7 @@ class Validar{
     	extract($arr_valor, EXTR_OVERWRITE);
     	$arr_reglas = array();
     	$arr_reglas['m3p1'] = array('regla'=>'requerido');
-    	$arr_reglas['m3p2'] = array('regla'=>'requerido');
+    	//$arr_reglas['m3p2'] = array('regla'=>'requerido');
     	$arr_reglas['m3p3'] = array('regla'=>'requerido');
     	$arr_reglas['m3p4'] = array('regla'=>'requerido');
     	$arr_reglas['m3p5'] = array('regla'=>'requerido');
@@ -335,9 +364,23 @@ class Validar{
     	$arr_reglas['m6p2'] = array('regla'=>'requerido');
     	$arr_reglas['m6p3'] = array('regla'=>'requerido');
     	$arr_reglas['m6p4'] = array('regla'=>'requerido');
-    	$arr_reglas['m6p5r1'] = array('regla'=>'requerido');
-    	$arr_reglas['m6p5r2'] = array('regla'=>'requerido');
+    	$arr_reglas['m6p5'] = array('regla'=>'requerido');
     	$arr_reglas['m6p6'] = array('regla'=>'requerido');
+    	$arr_reglas['m6p7'] = array('regla'=>'requerido');
+    	$arr_reglas['m6p8'] = array('regla'=>'requerido');
+    	$arr_reglas['m6p9'] = array('regla'=>'requerido');
+    	$arr_reglas['m6p10'] = array('regla'=>'requerido');
+    	$arr_reglas['m6p11r1'] = array('regla'=>'requerido');
+    	$arr_reglas['m6p11r2'] = array('regla'=>'requerido');
+    	$arr_reglas['m6p12'] = array('regla'=>'requerido');
+    	$arr_reglas['m6p13'] = array('regla'=>'requerido');
+    	$arr_reglas['m6p14'] = array('regla'=>'requerido');
+    	$arr_reglas['m6p15'] = array('regla'=>'requerido');
+    	$arr_reglas['m6p16r1'] = array('regla'=>'requerido');
+    	$arr_reglas['m6p16r2'] = array('regla'=>'requerido');
+    	$arr_reglas['m6p17'] = array('regla'=>'requerido');
+    	$arr_reglas['m6p18'] = array('regla'=>'requerido');
+    	
     	$this->arr_reglas = $arr_reglas;
     }
     /**

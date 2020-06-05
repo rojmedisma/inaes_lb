@@ -123,6 +123,10 @@ class ErrorControl extends ControladorBase{
 		$this->tit_error = "Valor de campo vacío";
 		$this->txt_error = "El valor del campo <em>".$cmp_nom."</em> perteneciente a la tabla <em>".$tbl_nom."</em>; se encuentra vacío y se requiere que tenga información.";
 	}
+	public function sin_id_cuest(){
+		$this->tit_error = "Id de cuestionario no identificado";
+		$this->txt_error = "No se pudo identificar el Id del cuestionario que se desea abrir";
+	}
 	/**
 	 * Esta función se ejecuta al final del llamado de la respectiva acción de error
 	 */

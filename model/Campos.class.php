@@ -160,7 +160,7 @@ class Campos extends Ayuda{
 	public function cmpTextoLectura($cmp_id_nom, $arr_atrib_usu=array()){
 		$arr_atrib = $this->defineAtributos($cmp_id_nom, $arr_atrib_usu, "texto_lectura");
 		$arr_tag = array();
-		$arr_tag[] = (isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt'], '', $arr_atrib_usu) : '';
+		$arr_tag[] = (isset($arr_atrib['lbl_txt']))? $this->label($arr_atrib['lbl_txt'], $cmp_id_nom, $arr_atrib_usu) : '';
 		$arr_tag[] = $this->textoLectura($arr_atrib['value']);
 		$arr_tag[] = '<input type="hidden" name="'.$cmp_id_nom.'" id="'.$cmp_id_nom.'" value="'.$arr_atrib['value'].'">';
 		$arr_tag[] = $arr_atrib['tag_note_error'];
@@ -476,7 +476,7 @@ class Campos extends Ayuda{
 	 * @return array
 	 */
 	private function defineSelectOptions($cmp_id_nom, $arr_atrib_usu){
-		$arr_tag_options = array('<option value="" data-desc_val="" data-esp_val="">[SELECCIONAR]</option>');
+		$arr_tag_options = array('<option value="" data-desc_val="" data-esp_val="">[Seleccionar]</option>');
 		
 		$valor_act = $this->getValor($cmp_id_nom);
 		if(isset($arr_atrib_usu['arr_options'])){
@@ -522,10 +522,12 @@ class Campos extends Ayuda{
 		if(!isset($arr_atrib['ver_nombre_campo']))	$arr_atrib['ver_nombre_campo'] = $this->getVerNombreCampo();
 		
 		$arr_validaciones = $this->getArrValidaciones();
-		if(isset($arr_validaciones[$cmp_id_nom]['alerta']) && $arr_validaciones[$cmp_id_nom]['alerta']!=""){
+		
+		if(isset($arr_validaciones[$cmp_id_nom]->alerta) && $arr_validaciones[$cmp_id_nom]->alerta!=""){
+			$alerta = $arr_validaciones[$cmp_id_nom]->alerta;
 		    $arr_atrib['frm_group_class'] = $arr_atrib['frm_group_class'].' has-error';
 		    //Si únicamente se quiere marcar el campo, pero no mostrar mensaje, en la alerta viene el texto [sin_desc]. Se usa para la regla de seleccionar al menos una opción
-		    $arr_atrib['tag_alerta'] = ($arr_validaciones[$cmp_id_nom]['alerta']!="[sin_desc]")? '<span class="help-block">'.$arr_validaciones[$cmp_id_nom]['alerta'].'</span>' :'';
+		    $arr_atrib['tag_alerta'] = ($alerta!="[sin_desc]")? '<span class="help-block">'.$alerta.'</span>' :'';
 		}else{
 		    $arr_atrib['tag_alerta'] = '';
 		}

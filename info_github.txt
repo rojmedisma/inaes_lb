@@ -1,28 +1,32 @@
-Para un nuevo proyecto:
+;	*	*	Para un nuevo proyecto:
 
-1 Crear el archivo .gitignore
-2 Crear nuevo repositorio en github
+;1 Crear el archivo .gitignore
+;2 Crear nuevo repositorio en github
 
 
 
-3 Ejecutar los siguientes comandos
-Pasos para subir
+;3 Ejecutar los siguientes comandos
+;Pasos para subir
 git init
+git pull https://github.com/rojmedisma/inaes_lb.git master
 git add .
 git status
 git commit -m 'Toda la estructura de la primer versión demo funcional, antes de que se pospusiera el proyecto por la pandemia.'
 git remote add origin https://github.com/rojmedisma/inaes_lb.git
 git push -u origin master
 
-# Si no jala, primero importamos todo
-git pull https://github.com/rojmedisma/inaes_lb.git master
-
-
-Toda la estructura de la primer versión demo funcional, antes de que se pospusiera el proyecto por la pandemia.
-
-https://github.com/rojmedisma/inaes_lb.git
-
-https://github.com/rojmedisma/inaes_lb.git
+;Si no jala, primero importamos todo
 
 
 
+;Toda la estructura de la primer versión demo funcional, antes de que se pospusiera el proyecto por la pandemia.
+
+;https://github.com/rojmedisma/inaes_lb.git
+
+;https://github.com/rojmedisma/inaes_lb.git
+
+;	*	*	Para actualizar
+git add .
+git status
+git commit -m 'Actualización de archivo modificado a partir del proyecto aserca_fca'
+git push -u origin master

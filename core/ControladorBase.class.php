@@ -232,7 +232,7 @@ class ControladorBase{
 		return $this->arr_cmps_frm;
 	}
 	/**
-	 * Devuelve el valor del campo indicado en el argumento
+	 * Del arreglo de campos de la forma actual, devuelve el valor del campo indicado en el argumento
 	 * @param string $cmp_nom	Nombre del campo
 	 * @return string
 	 */

@@ -65,13 +65,11 @@ class Guardar{
 		$this->cmp_id_val = $cuestionario_id;
 		$log->setRegLog('cuestionario_id', $cuestionario_id, 'setGuardaCuest', 'Aviso', $txt_log);
 	}
-	public function setNuevoCuestionario($arr_lista_tablas, $cat_cuestionario_id){
+	public function setNuevoCuestionario($arr_lista_tablas, $cat_cuestionario_id, $cat_usuario_id){
 		//Nuevo registro
 		$log = new Log();
 		$cuestionario_id = $this->crearCuestionarioId($cat_cuestionario_id);
-		$usuario = new Usuario();
-		$usuario->setArrUsuario();
-		$cat_usuario_id = $usuario->get_val_campo("cat_usuario_id");
+		
 		
 		//Se inserta el registro de la tabla c00
 		$arr_cmps_c00 = array(
@@ -82,7 +80,7 @@ class Guardar{
 				'estatus_cuest'=>txt_sql(""),
 				'creacion_fecha'=>"IFNULL(`creacion_fecha`, CURDATE())",
 				'creacion_hora'=>"IFNULL(`creacion_hora`, CURTIME())",
-				'borrar'=>txt_sql("2"),
+				'borrar'=>txt_sql(""),
 		);
 		$qry_act = "INSERT INTO `".$this->bd->getBD()."`.`c00` (".implode(",",array_keys($arr_cmps_c00)).") VALUES (".implode(",",array_values($arr_cmps_c00)).");";
 		$this->bd->ejecutaQry($qry_act);

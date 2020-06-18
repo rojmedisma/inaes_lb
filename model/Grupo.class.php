@@ -43,7 +43,21 @@ class Grupo{
 		$bd = new BaseDatos();
 		$and_activo = ($activo)? " AND `activo` = 1" : " AND `activo` IS NULL OR `activo` = 0 ";
 		$and_tbl = $and.$and_activo;
-		$arr_gpo= $bd->getArrDeTabla('v_grupo',$and_tbl);
+		
+		$qry = "SELECT 
+		`grupo`.*,
+		`cat_grupo`.`tit_corto` AS `cg_tit_corto`,
+		`cat_grupo`.`descripcion` AS `cg_descripcion`,
+		`cat_permiso`.`tipo` AS `cp_tipo`,
+		`cat_permiso`.`tit_corto` AS `cp_tit_corto`,
+		`cat_permiso`.`descripcion` AS `cp_descripcion`,
+		`cat_permiso`.`orden` AS `cp_orden` 
+		FROM `".$bd->getBD()."`.`grupo`
+		LEFT JOIN `".$bd->getBD()."`.`cat_grupo` ON(`cat_grupo`.`cat_grupo_id` = `grupo`.`cat_grupo_id`)
+		LEFT JOIN `".$bd->getBD()."`.`cat_permiso` ON(`cat_permiso`.`cat_permiso_cve` = `grupo`.`cat_permiso_cve`)
+		WHERE 1 ".$and_tbl."
+		ORDER BY `cat_grupo`.`tit_corto`,`cat_permiso`.`tit_corto`;";
+		$arr_gpo= $bd->getArrDeQuery($qry);
 		$this->arr_grupo = $arr_gpo;
 	}
 	/**

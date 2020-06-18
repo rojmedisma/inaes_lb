@@ -28,5 +28,5 @@ git push -u origin master
 ;	*	*	Para actualizar
 git add .
 git status
-git commit -m 'Actualización de archivo modificado a partir del proyecto aserca_fca'
+git commit -m 'Versión con la actualización de archivos comunes usados en otra aplicación v1.1'
 git push -u origin master

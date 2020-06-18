@@ -5,22 +5,25 @@
  *
  */
 class Cat_usuarioControl extends ControladorBase{
+	public $permiso;
+	
 	public $tag_campo = null;
 	private $arr_tbl_cu = array();
 	private $arr_grupo = array();
-	public $and_cader;
-	private $arr_cat_edo_cader = array();
-	private $permiso_escritura=false;
-	private $permiso_borrar = false;
+	private $activo = true;
 	public function __construct(){
-		$permiso = new Permiso();
-		$this->permiso_escritura = $permiso->tiene_permiso('ae_usuario');
-		$this->permiso_borrar = $permiso->tiene_permiso('borrar_usr');
+		
+		$this->setArrRegUsuario();
+		
+		$this->permiso = new Permiso();
+		$this->setArrPermiso("lectura", $this->permiso->tiene_permiso("al_usuario"));
+		$this->setArrPermiso("escritura", $this->permiso->tiene_permiso("ae_usuario"));
+		$this->setArrPermiso("borrar", $this->permiso->tiene_permiso("borrar_usr"));
 	}
 	/**
 	 * Acción para abrir la vista o consulta de registros del catálogo de usuarios
 	 */
-	public function inicio(){
+	public function vista(){
 		$this->setPaginaDistintivos();
 		$this->setArrTblContenido();
 		$this->setMostrarVista('CatUsuarioVista.php');
@@ -28,7 +31,7 @@ class Cat_usuarioControl extends ControladorBase{
 	/**
 	 * Acción para abrir el formulario de usuario y desplegar el detalle del registro seleccionado o una forma nueva y crear un registro de usuario
 	 */
-	public function abrir(){
+	public function forma(){
 		$cat_usuario_id = (isset($_REQUEST['cat_usuario_id']))? intval($_REQUEST['cat_usuario_id']) : 0;
 		
 		$arr_usuario_frm = array();
@@ -39,29 +42,18 @@ class Cat_usuarioControl extends ControladorBase{
 			
 			if(isset($arr_usuario_frm['cat_grupo_id']) && intval($arr_usuario_frm['cat_grupo_id'])){
 				$grupo = new Grupo();
-				$grupo->setArrViGrupo("AND `cat_grupo_id` = '".$arr_usuario_frm['cat_grupo_id']."'");
+				$grupo->setArrViGrupo("AND `cat_grupo`.`cat_grupo_id` = '".$arr_usuario_frm['cat_grupo_id']."'");
 				$this->arr_grupo = $grupo->getArrViGrupo();
 			}
+			if(intval($arr_usuario_frm["activo"])!=1){
+				$this->activo = false;
+			}
 		}
-		
-		$catalogo = new Catalogo();
-		$catalogo->setArrCatEdoCader();
-		$this->arr_cat_edo_cader = $catalogo->getArrTblCat();
-		
-		if(isset($arr_usuario_frm['cat_estado_id']) && $arr_usuario_frm['cat_estado_id']!=""){
-			$this->and_cader = " AND `cat_estado_id` LIKE '".$arr_usuario_frm['cat_estado_id']."' ORDER BY `descripcion` ";
-		}else{
-			$this->and_cader = " AND 0 ";
-		}
-		
-		//Asignación temporal del estado de Jalisco
-		//$arr_usuario_frm['cat_estado_id'] = '14';
-		//$arr_usuario_frm['cat_estado_id_desc'] = 'Jalisco';
-		//$this->and_mpo = " AND `cat_municipio_id` IN('14047', '14051', '14066', '14063', '14123') ";
 		
 		$this->setPaginaDistintivos();
 		$this->setMostrarVista('CatUsuarioForma.php');
 		$this->tag_campo = new Campos();
+		$this->tag_campo->setVerNombreCampo(false);
 		$this->tag_campo->setValorCampos($arr_usuario_frm);
 		
 	}
@@ -78,6 +70,7 @@ class Cat_usuarioControl extends ControladorBase{
 			redireccionar('cat_usuario','inicio');
 		}else{
 			redireccionar('error','sin_permisos', array('tit_accion'=>'Borrar usuario'));
+			die();
 		}
 	}
 	/**
@@ -88,24 +81,10 @@ class Cat_usuarioControl extends ControladorBase{
 		return $this->arr_grupo;
 	}
 	/**
-	 * Devuelve el arreglo con el catálogo de CADER categorizado por estado
-	 * @return array
-	 */
-	public function getArrCatEdoCader(){
-		return $this->arr_cat_edo_cader;
-	}
-	/**
-	 * Devuelve parte de la sentencia query con la condición del filtrado para la consulta al catálogo de CADER
-	 * @return string
-	 */
-	public function getAndCader(){
-		return $this->and_cader;
-	}
-	/**
 	 * Acción Guardar para el catálgo de usuario
 	 */
 	public function guardar(){
-		if($this->getPermisoEscritura()){
+		if($this->tienePermiso("escritura")){
 			$cat_usuario_id = (isset($_REQUEST['cat_usuario_id']))? intval($_REQUEST['cat_usuario_id']) : 0;
 			$clave= (isset($_REQUEST['clave']))? $_REQUEST['clave'] : "";
 			$bd = new BaseDatos();
@@ -139,9 +118,10 @@ class Cat_usuarioControl extends ControladorBase{
 				$autentificar->setActualizaClave($cat_usuario_id, $clave);
 				$log->setRegLog('cat_usuario_id', $cat_usuario_id, 'guardar', 'Aviso', 'Se actualizó clave en registro de Catálogo de usuario');
 			}
-			redireccionar('cat_usuario','abrir',array('cat_usuario_id'=>$cat_usuario_id));
+			redireccionar('cat_usuario','forma',array('cat_usuario_id'=>$cat_usuario_id));
 		}else{
 			redireccionar('error','sin_permisos', array('tit_accion'=>'Guardar usuario'));
+			die();
 		}
 	}
 	/**
@@ -160,18 +140,10 @@ class Cat_usuarioControl extends ControladorBase{
 		return $this->arr_tbl_cu;
 	}
 	/**
-	 * Devuelve el valor de la variable a la que se le asignó la indicación de si el usuario actual tiene permiso de escritura
+	 * Devuelve el estatus activo (si,no) del usuario para ser indicador o desplegado
 	 * @return boolean
 	 */
-	public function getPermisoEscritura(){
-		return $this->permiso_escritura;
-	}
-	/**
-	 * Devuelve el valor de la variable a la que se le asignó la indicación de si el usuario actual tiene permiso para borrar
-	 * @return boolean
-	 */
-	public function getPermisoBorrar() {
-		return $this->permiso_borrar;
-		;
+	public function esActivo(){
+		return $this->activo;
 	}
 }

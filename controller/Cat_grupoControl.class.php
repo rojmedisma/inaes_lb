@@ -74,6 +74,7 @@ class Cat_grupoControl extends ControladorBase{
 			redireccionar('cat_grupo','abrir',array('cat_grupo_id'=>$cat_grupo_id));
 		}else{
 			redireccionar('error','sin_permisos', array('tit_accion'=>'Guardar'));
+			die();
 		}
 		
 	}
@@ -111,6 +112,7 @@ class Cat_grupoControl extends ControladorBase{
 			redireccionar('cat_grupo','abrir',array('cat_grupo_id'=>$cat_grupo_id));
 		}else{
 			redireccionar('error','sin_permisos', array('tit_accion'=>'Activar/desactivar permisos'));
+			die();
 		}
 		
 	}
@@ -127,6 +129,7 @@ class Cat_grupoControl extends ControladorBase{
 			redireccionar('cat_grupo','inicio');
 		}else{
 			redireccionar('error','sin_permisos', array('tit_accion'=>'Borrar grupo'));
+			die();
 		}
 	}
 	/**

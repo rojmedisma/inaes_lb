@@ -8,8 +8,10 @@ class Autentificar extends Ayuda{
 	private $usuario = '';
 	private $clave = '';
 	private $bd;
+	private $and_usuario;
 	public function __construct(){
 		$this->bd = new BaseDatos();
+		$this->and_usuario = " AND `borrar` IS NULL AND `activo` = 1";
 	}
 	/**
 	 * Modifica los atributos usuario y clave a partir de la información enviada mediante los argumentos
@@ -43,7 +45,7 @@ class Autentificar extends Ayuda{
 			$this->setError('Nombre de usuario vacío', 'Favor de registrar el nombre de usuario');
 			return false;
 		}else{
-			$qry_cu = "SELECT COUNT(*) AS 'total' FROM `".$this->bd->getBD()."`.`cat_usuario` WHERE `usuario` LIKE '".$this->getUsuario()."' AND `borrar` IS NULL";
+			$qry_cu = "SELECT COUNT(*) AS 'total' FROM `".$this->bd->getBD()."`.`cat_usuario` WHERE `usuario` LIKE '".$this->getUsuario()."'".$this->and_usuario;
 			$total = $this->bd->get1erElemQry('total', $qry_cu);
 			if($total){
 				return true;
@@ -61,13 +63,13 @@ class Autentificar extends Ayuda{
 			$this->setError('Clave vacía', 'Favor de registrar la clave');
 			return false;
 		}else{
-			$arr_tbl = $this->bd->getArrDeTabla('cat_usuario', " AND `usuario` LIKE '".$this->getUsuario()."' AND `borrar` IS NULL");
+			$arr_tbl = $this->bd->getArrDeTabla('cat_usuario', " AND `usuario` LIKE '".$this->getUsuario()."'".$this->and_usuario);
 			$arr_cu = $arr_tbl[0];
 			
 			$clave = $arr_cu['clave'];
 			$cat_usuario_id = $arr_cu['cat_usuario_id'];
 			$usuario = $arr_cu['usuario'];
-			$ll = '1|'.$cat_usuario_id.'|'.$usuario.'|SIAP';
+			$ll = CLAVE_LLAVE_1.'|'.$cat_usuario_id.'|'.$usuario.'|'.CLAVE_LLAVE_2;
 			
 			
 			$cr = new Encriptar();
@@ -107,7 +109,7 @@ class Autentificar extends Ayuda{
 		
 		$usuario = (isset($arr_tbl_usr['usuario']))? $arr_tbl_usr['usuario'] :'';
 		if($usuario!="" && $clave!=""){
-			$ll = '1|'.$cat_usuario_id.'|'.$usuario.'|SIAP';
+			$ll = CLAVE_LLAVE_1.'|'.$cat_usuario_id.'|'.$usuario.'|'.CLAVE_LLAVE_2;
 			$cr = new Encriptar();
 			$pw_cr = $cr->encode($clave,$ll);
 			$qry = "UPDATE `".$this->bd->getBD()."`.`cat_usuario` SET `clave` = '".$pw_cr."' WHERE `cat_usuario`.`cat_usuario_id` = '".$cat_usuario_id."';";

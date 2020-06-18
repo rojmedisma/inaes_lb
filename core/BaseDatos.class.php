@@ -51,9 +51,10 @@ class BaseDatos extends Ayuda{
 	 * @param string $sin_libreria
 	 * @return string
 	 */
-	public function getTagErrorSQL($qry, $sin_libreria=false){
+	public function getTagErrorSQL($qry, $sin_libreria=false, $txt_adicional=''){
 		$txt_tit = 'Error en consulta';
 		$txt_desc = '<br><strong>Error en query:</strong><br>'.$qry.'<br>'.$this->mysqli->errno.'<br>'.$this->mysqli->error;
+		$txt_desc .= $this->getTxtAdicionalError();
 		if(!$sin_libreria){
 			$txt_desc .= '<p class="text-center"><a href="'.url_controlador(CONTROLADOR_DEFECTO,ACCION_DEFECTO,'',false).'" class="btn btn-primary">Ir a página principal</a></p>';
 		}		
@@ -228,5 +229,17 @@ class BaseDatos extends Ayuda{
 		$cmp_id_nom = ($cmp_id_nom=="")? $tbl_nom."_id" : $cmp_id_nom;
 		$qry = "UPDATE  `".$this->getBD()."`.`".$tbl_nom."` SET  `borrar` =  '1' WHERE  `".$cmp_id_nom."` ='".$cmp_id_val."' LIMIT 1;";
 		return $this->ejecutaQry($qry);
-	}															   
+	}
+	/**
+	 * Conforme se van identificando los errores, en esta función se pueden agregar textos adicionales que complementen el mensaje de error para que sea mas descriptivo
+	 * @return string
+	 */
+	private function getTxtAdicionalError(){
+		if($this->mysqli->errno == 1062){
+			$txt_adicional = "<br><br>Al intentar insertar el registro en la tabla, se generó un conflicto de llaves duplicadas con los campos que el error describe.";
+		}else{
+			$txt_adicional = "";
+		}
+		return $txt_adicional;
+	}
 }
